@@ -1,4 +1,8 @@
 
+# Copyright 2019 Pavel Petrov <itnelo@gmail.com>. All rights reserved.
+# Use of this source code is governed by a MIT license
+# that can be found in the LICENSE file.
+
 version: '2'
 
 services:
@@ -10,12 +14,12 @@ services:
                 DEPLOYMENT_PATH: ${DEPLOYMENT_PATH}
                 TIMEZONE: ${TIMEZONE}
         networks:
-            backend:
-                ipv4_address: ${NETWORK_IP}
+            back:
                 aliases:
                     - ${APP_HOST_EXPOSE}
+        ports:
+            - "${APP_PORT_EXPOSE}:9595"
 
 networks:
-    backend:
-        external:
-            name: ${NETWORK_NAME}
+    back:
+        driver: bridge
