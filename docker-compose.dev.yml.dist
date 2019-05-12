@@ -1,0 +1,21 @@
+
+version: '2'
+
+services:
+    app:
+        build:
+            context: .
+            args:
+                GOLANG_VERSION: ${GOLANG_VERSION}
+                DEPLOYMENT_PATH: ${DEPLOYMENT_PATH}
+                TIMEZONE: ${TIMEZONE}
+        networks:
+            backend:
+                ipv4_address: ${NETWORK_IP}
+                aliases:
+                    - ${APP_HOST_EXPOSE}
+
+networks:
+    backend:
+        external:
+            name: ${NETWORK_NAME}

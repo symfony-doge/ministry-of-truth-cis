@@ -1,0 +1,12 @@
+vendor/*
+!vendor/.gitkeep
+
+build/*
+!build/.gitkeep
+
+*.o
+*.debug
+
+.env
+Dockerfile
+docker-compose.yml
