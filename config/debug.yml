@@ -1,3 +1,8 @@
+data:
+    tag:
+        group:
+            json: 'data/%s/tag_groups.json'
+
 log:
     main:
         filepath: 'var/logs/%s.log'

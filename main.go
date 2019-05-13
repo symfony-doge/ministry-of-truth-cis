@@ -49,9 +49,19 @@ func init() {
 }
 
 func main() {
-	var router *gin.Engine = gin.Default()
+	var router *gin.Engine = gin.New()
 
-	router.GET("/tag/groups", handler.TagGroup().GetAll())
+	router.Use(gin.Logger())
+	// TODO: recovery middleware.
+
+	var tagRouterGroup *gin.RouterGroup = router.Group("/tag")
+	{
+		var tagGroupRouterGroup = tagRouterGroup.Group("/groups")
+		{
+			tagGroupRouterGroup.GET("", handler.TagGroup().GetAll())
+			tagGroupRouterGroup.POST("", handler.TagGroup().GetAll())
+		}
+	}
 
 	var networkAddressToListen = ":" + strconv.Itoa(ServerPort)
 	var err = router.Run(networkAddressToListen)

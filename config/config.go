@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log"
 
+	jjw "github.com/spf13/jwalterweatherman"
 	"github.com/spf13/viper"
 )
 
@@ -24,6 +25,11 @@ type ConfigNotLoadedError struct {
 // ConfigNotLoadedError.Error returns the formatted error.
 func (err ConfigNotLoadedError) Error() string {
 	return fmt.Sprintf("Unable to load configuration for mode %q.", err.mode)
+}
+
+func init() {
+	// Category for logger that is used by viper.
+	jjw.SetPrefix("Viper")
 }
 
 // Loads configuration according to specified Gin mode.

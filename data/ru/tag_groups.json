@@ -1,0 +1,17 @@
+[
+	{
+		"name": "soft",
+		"description": "Вода, спам и очепятки",
+		"color": "#3fa0db"
+	},
+	{
+		"name": "hard",
+		"description": "Технические фейлы",
+		"color": "#d84343"
+	},
+	{
+		"name": "lulz",
+		"description": "Шутки и мемы",
+		"color": "#d834cd"
+	}
+]

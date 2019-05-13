@@ -8,30 +8,32 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/symfony-doge/ministry-of-truth-cis/request"
+	"github.com/symfony-doge/ministry-of-truth-cis/tag"
 )
 
-type tagGroup struct{}
+// Tag group handler.
+type tagGroupHandler struct {
+	// Converts body of HTTP request into appropriate request.Request structure.
+	requestBinder request.Binder
+
+	// Provides tag groups.
+	groupProvider tag.GroupProvider
+}
 
 // Returns all available tag groups.
-func (handler *tagGroup) GetAll() gin.HandlerFunc {
+func (handler *tagGroupHandler) GetAll() gin.HandlerFunc {
 	return func(context *gin.Context) {
+		var req *request.Request = handler.requestBinder.Bind(context)
+		var data tag.Groups = handler.groupProvider.GetByLocale(req.Locale)
+
 		context.JSON(
 			http.StatusOK,
 			gin.H{
-				"status": "OK",
-				"errors": []string{},
-				"tag_groups": []gin.H{
-					{
-						"name":        "soft",
-						"description": "A senseless verbiage, poor language or just a spam words",
-						"color":       "#61C3FF",
-					},
-				},
+				"status":     "OK",
+				"errors":     []string{},
+				"tag_groups": data,
 			},
 		)
 	}
-}
-
-func TagGroup() *tagGroup {
-	return &tagGroup{}
 }
