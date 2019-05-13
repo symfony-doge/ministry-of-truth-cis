@@ -3,6 +3,6 @@
 // that can be found in the LICENSE file.
 
 /*
-	Package request provides expected request body model and related components.
+	Package request provides request body model and related components.
 */
 package request

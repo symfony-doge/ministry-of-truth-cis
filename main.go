@@ -29,7 +29,7 @@ func init() {
 
 	gin.SetMode(GinMode)
 
-	// Adjusting log level for viper configuration manager in debug mode.
+	// Adjusting log level for Viper configuration manager in debug mode.
 	if gin.IsDebugging() {
 		jjw.SetLogThreshold(jjw.LevelTrace)
 		jjw.SetStdoutThreshold(jjw.LevelTrace)
@@ -56,7 +56,7 @@ func main() {
 
 	var tagRouterGroup *gin.RouterGroup = router.Group("/tag")
 	{
-		var tagGroupRouterGroup = tagRouterGroup.Group("/groups")
+		var tagGroupRouterGroup *gin.RouterGroup = tagRouterGroup.Group("/groups")
 		{
 			tagGroupRouterGroup.GET("", handler.TagGroup().GetAll())
 			tagGroupRouterGroup.POST("", handler.TagGroup().GetAll())

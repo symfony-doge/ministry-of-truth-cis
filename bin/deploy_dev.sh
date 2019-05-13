@@ -19,7 +19,7 @@ docker-compose build --force-rm
 echo
 
 echo "[${APP_ENV}] Fixing permissions..."
-sudo chown -R www-data:www-data var/logs
+sudo chown -R www-data:www-data var/logs/app
 echo
 
 echo "[${APP_ENV}] Starting docker-compose services..."

@@ -20,7 +20,7 @@ services:
         ports:
             - "${APP_PORT_EXPOSE}:9595"
         volumes:
-            - ${PWD}/var/logs:${DEPLOYMENT_PATH}/var/logs
+            - ${PWD}/var/logs/app:${DEPLOYMENT_PATH}/var/logs/app
 
 networks:
     back:

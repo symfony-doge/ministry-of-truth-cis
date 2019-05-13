@@ -5,6 +5,6 @@ data:
 
 log:
     main:
-        filepath: 'var/logs/%s.log'
+        filepath: 'var/logs/app/%s.log'
     error:
-        filepath: 'var/logs/%s-error.log'
+        filepath: 'var/logs/app/%s-error.log'

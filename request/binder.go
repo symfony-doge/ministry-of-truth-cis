@@ -11,8 +11,6 @@ import (
 )
 
 // Converts request body into Request structure using gin.Context
-// or starts panic that should be recovered and transformed into
-// a valid json response with error code and description.
 type Binder interface {
 	Bind(context *gin.Context) *Request
 }
