@@ -4,6 +4,12 @@ vendor/*
 build/*
 !build/.gitkeep
 
+var/*
+
+!var/logs
+var/logs/*
+!var/logs/.gitkeep
+
 *.o
 *.debug
 

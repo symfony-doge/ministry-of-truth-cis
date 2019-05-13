@@ -1,0 +1,5 @@
+log:
+    main:
+        filepath: 'var/logs/%s.log'
+    error:
+        filepath: 'var/logs/%s-error.log'
