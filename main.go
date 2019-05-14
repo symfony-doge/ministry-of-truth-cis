@@ -14,6 +14,7 @@ import (
 	"github.com/symfony-doge/ministry-of-truth-cis/config"
 	"github.com/symfony-doge/ministry-of-truth-cis/handler"
 	applog "github.com/symfony-doge/ministry-of-truth-cis/log"
+	"github.com/symfony-doge/ministry-of-truth-cis/middleware"
 )
 
 var (
@@ -41,18 +42,26 @@ func init() {
 	}
 
 	// Setting up log files.
-	var logConfigurator = &applog.Configurator{}
-
-	if err := logConfigurator.ConfigureAllCategories(); nil != err {
-		log.Fatal(err)
+	var logWriter, lwErr = applog.NewWriter()
+	if nil != lwErr {
+		log.Println(lwErr)
+		log.Fatal("Unable to init main log.")
 	}
+	gin.DefaultWriter = *logWriter
+
+	var errLogWriter, elwErr = applog.NewErrorWriter()
+	if nil != elwErr {
+		log.Println(elwErr)
+		log.Fatal("Unable to init error log.")
+	}
+	gin.DefaultErrorWriter = *errLogWriter
 }
 
 func main() {
 	var router *gin.Engine = gin.New()
 
 	router.Use(gin.Logger())
-	// TODO: recovery middleware.
+	router.Use(middleware.Recovery())
 
 	var tagRouterGroup *gin.RouterGroup = router.Group("/tag")
 	{
