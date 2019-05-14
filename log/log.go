@@ -29,7 +29,7 @@ func (err LoggerNotCreatedError) Error() string {
 	return fmt.Sprintf("Unable to create logger (prefix='%s').", err.prefix)
 }
 
-// WriterNotCreatedError is returned if NewErrorWriter call failed.
+// WriterNotCreatedError is returned if NewWriter or NewErrorWriter call failed.
 type WriterNotCreatedError struct {
 	filepath string
 }

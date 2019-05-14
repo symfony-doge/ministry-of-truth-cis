@@ -8,10 +8,10 @@ package response
 type ErrorType uint16
 
 const (
-	InternalError = iota
+	InternalError ErrorType = iota
 )
 
-var errorTypes = [...]string{
+var responseErrorTypes = [...]string{
 	"main.internal_error",
 }
 
@@ -21,8 +21,10 @@ func (etype ErrorType) String() string {
 		panic("response: undefined error type.")
 	}
 
-	return errorTypes[etype]
+	return responseErrorTypes[etype]
 }
+
+type Errors []Error
 
 // Error is a safe description of problem that prevents request processing.
 // Will be provided for client and should not contain any sensitive information.

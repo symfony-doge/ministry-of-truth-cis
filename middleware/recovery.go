@@ -12,7 +12,7 @@ import (
 	"github.com/symfony-doge/ministry-of-truth-cis/response"
 )
 
-// JSONRecoveryWith returns a middleware callback that recovers from any panic
+// Returns a middleware callback that recovers from any panic
 // and writes a valid json response with negative status and error description.
 func jsonRecoveryWith(logger *log.Logger) gin.HandlerFunc {
 	return func(context *gin.Context) {

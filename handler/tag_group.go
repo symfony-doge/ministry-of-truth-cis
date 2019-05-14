@@ -9,8 +9,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/symfony-doge/ministry-of-truth-cis/request"
+	"github.com/symfony-doge/ministry-of-truth-cis/response"
 	"github.com/symfony-doge/ministry-of-truth-cis/tag"
 )
+
+type TagGroupsGetAllResponse struct {
+	response.DefaultResponse
+
+	Payload tag.Groups `json:"tag_groups"`
+}
 
 // Tag group handler.
 type tagGroupHandler struct {
@@ -25,15 +32,10 @@ type tagGroupHandler struct {
 func (handler *tagGroupHandler) GetAll() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var req *request.Request = handler.requestBinder.Bind(context)
-		var data tag.Groups = handler.groupProvider.GetByLocale(req.Locale)
+		var payload tag.Groups = handler.groupProvider.GetByLocale(req.Locale)
 
-		context.JSON(
-			http.StatusOK,
-			gin.H{
-				"status":     "OK",
-				"errors":     []string{},
-				"tag_groups": data,
-			},
-		)
+		var response = &TagGroupsGetAllResponse{response.NewOkResponse(), payload}
+
+		context.JSON(http.StatusOK, response)
 	}
 }

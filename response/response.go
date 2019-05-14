@@ -8,11 +8,11 @@ package response
 type Status uint8
 
 const (
-	StatusFail = iota
+	StatusFail Status = iota
 	StatusOk
 )
 
-var statuses = []string{
+var responseStatuses = [...]string{
 	"FAIL",
 	"OK",
 }
@@ -23,20 +23,27 @@ func (s Status) String() string {
 		panic("response: undefined status.")
 	}
 
-	return statuses[s]
+	return responseStatuses[s]
 }
 
-// Will be used if other is not available,
+// Will be used if no other is available,
 // e.g. while recovering from unexpected situations.
 type DefaultResponse struct {
-	Status string  `json:"status"`
-	Errors []Error `json:"errors"`
+	Status string `json:"status"`
+	Errors `json:"errors"`
 }
 
-func NewInternalErrorResponse() *DefaultResponse {
+// Returns positive response without any errors.
+func NewOkResponse() DefaultResponse {
+	return NewResponse(StatusOk, Errors{}...)
+}
+
+// Returns negative response with internal error.
+func NewInternalErrorResponse() DefaultResponse {
 	return NewResponse(StatusFail, NewInternalError())
 }
 
-func NewResponse(status Status, errors ...Error) *DefaultResponse {
-	return &DefaultResponse{status.String(), errors}
+// Returns response with specified status and errors.
+func NewResponse(status Status, errors ...Error) DefaultResponse {
+	return DefaultResponse{status.String(), errors}
 }
