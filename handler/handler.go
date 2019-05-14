@@ -35,9 +35,13 @@ func TagGroup() *tagGroupHandler {
 	tagGroupH.requestBinder = strictBinder
 
 	// Group provider.
-	var groupProvider = &tag.JSONGroupProvider{}
-	groupProvider.SetLogger(tag.DefaultLogger)
-	tagGroupH.groupProvider = groupProvider
+	var jsonGroupProvider = tag.NewJSONGroupProvider()
+	jsonGroupProvider.SetLogger(tag.DefaultLogger)
+
+	var cachedGroupProvider = tag.NewCachedGroupProvider()
+	cachedGroupProvider.SetNested(jsonGroupProvider)
+
+	tagGroupH.groupProvider = cachedGroupProvider
 
 	return tagGroupH
 }

@@ -12,7 +12,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/symfony-doge/ministry-of-truth-cis/config"
 	"github.com/symfony-doge/ministry-of-truth-cis/request"
 )
@@ -27,15 +26,35 @@ type GroupProvider interface {
 	GetByLocale(request.Locale) Groups
 }
 
-// Provides tag groups by json file.
-type JSONGroupProvider struct {
-	logger *log.Logger
+// Provides tag groups from memory when possible.
+type CachedGroupProvider struct {
+	nested GroupProvider
 
-	// TODO cache
 	cached map[request.Locale]Groups
 }
 
-// Returns tag groups stored in json file.
+func (p *CachedGroupProvider) GetByLocale(locale request.Locale) Groups {
+	if fromCache, exists := p.cached[locale]; exists {
+		return fromCache
+	}
+
+	var tagGroups = p.nested.GetByLocale(locale)
+
+	p.cached[locale] = tagGroups
+
+	return tagGroups
+}
+
+func (p *CachedGroupProvider) SetNested(nested GroupProvider) {
+	p.nested = nested
+}
+
+// Provides tag groups by json file.
+type JSONGroupProvider struct {
+	logger *log.Logger
+}
+
+// Returns tag groups from json file.
 func (p *JSONGroupProvider) GetByLocale(locale request.Locale) Groups {
 	var c = config.Instance()
 
@@ -53,10 +72,6 @@ func (p *JSONGroupProvider) GetByLocale(locale request.Locale) Groups {
 	var tagGroups Groups
 	var unmarshalErr = json.Unmarshal(buf.Bytes(), &tagGroups)
 	p.ensureEmptyError(unmarshalErr)
-
-	if gin.IsDebugging() && nil != p.logger {
-		p.logger.Printf("JSONGroupProvider.GetByLocale: %v\n", tagGroups)
-	}
 
 	return tagGroups
 }
@@ -76,4 +91,12 @@ func (p *JSONGroupProvider) ensureEmptyError(err error) {
 
 func (p *JSONGroupProvider) SetLogger(logger *log.Logger) {
 	p.logger = logger
+}
+
+func NewCachedGroupProvider() *CachedGroupProvider {
+	return &CachedGroupProvider{cached: make(map[request.Locale]Groups)}
+}
+
+func NewJSONGroupProvider() *JSONGroupProvider {
+	return &JSONGroupProvider{}
 }
