@@ -20,12 +20,12 @@ var localeSupported = map[Locale]bool{
 	"ru": true,
 }
 
-// Represents expected request body content from client.
+// Represents request body content from client.
 type Request struct {
 	Locale `form:"locale" json:"locale" binding:"required,locale"`
 }
 
 // Implements fmt.Stringer interface.
 func (r Request) String() string {
-	return fmt.Sprintf("Request{locale: '%s'}", r.Locale)
+	return fmt.Sprintf("DefaultRequest(locale='%s')", r.Locale)
 }

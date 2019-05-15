@@ -15,23 +15,23 @@ type JSONBinder struct {
 	logger *log.Logger
 }
 
-func (b *JSONBinder) Bind(context *gin.Context) *Request {
+func (b *JSONBinder) Bind(context *gin.Context) (*Request, error) {
 	var requestFromJson Request
 	var isLoggerProvided = nil != b.logger
 
 	if err := context.ShouldBindJSON(&requestFromJson); nil != err {
 		if isLoggerProvided {
-			b.logger.Printf("JSONBinder.Bind: %v\n", err)
+			b.logger.Printf("JSONBinder.Bind: %T %v\n", err, err)
 		}
 
-		return nil
+		return nil, err
 	}
 
 	if isLoggerProvided && gin.IsDebugging() {
 		b.logger.Printf("JSONBinder.Bind: %v\n", requestFromJson)
 	}
 
-	return &requestFromJson
+	return &requestFromJson, nil
 }
 
 func (b *JSONBinder) SetLogger(logger *log.Logger) {

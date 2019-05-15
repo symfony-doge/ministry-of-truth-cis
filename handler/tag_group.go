@@ -5,8 +5,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/symfony-doge/ministry-of-truth-cis/request"
 	"github.com/symfony-doge/ministry-of-truth-cis/response"
@@ -21,21 +19,17 @@ type TagGroupGetAllResponse struct {
 
 // Tag group handler.
 type tagGroupHandler struct {
-	// Converts body of HTTP request into appropriate request.Request structure.
-	requestBinder request.Binder
+	DefaultHandler
 
 	// Provides tag groups.
 	groupProvider tag.GroupProvider
 }
 
 // Returns all available tag groups.
-func (handler *tagGroupHandler) GetAll() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		var req *request.Request = handler.requestBinder.Bind(context)
-		var payload tag.Groups = handler.groupProvider.GetByLocale(req.Locale)
+func (h *tagGroupHandler) GetAll() gin.HandlerFunc {
+	return h.handle(func(req *request.Request) interface{} {
+		var payload tag.Groups = h.groupProvider.GetByLocale(req.Locale)
 
-		var response = &TagGroupGetAllResponse{response.NewOkResponse(), payload}
-
-		context.JSON(http.StatusOK, response)
-	}
+		return &TagGroupGetAllResponse{response.NewOkResponse(), payload}
+	})
 }

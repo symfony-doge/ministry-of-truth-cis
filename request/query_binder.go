@@ -15,23 +15,23 @@ type QueryBinder struct {
 	logger *log.Logger
 }
 
-func (b *QueryBinder) Bind(context *gin.Context) *Request {
+func (b *QueryBinder) Bind(context *gin.Context) (*Request, error) {
 	var requestFromQuery Request
 	var isLoggerProvided = nil != b.logger
 
 	if err := context.ShouldBindQuery(&requestFromQuery); nil != err {
 		if isLoggerProvided {
-			b.logger.Printf("QueryBinder.Bind: %v\n", err)
+			b.logger.Printf("QueryBinder.Bind: %T %v\n", err, err)
 		}
 
-		return nil
+		return nil, err
 	}
 
 	if isLoggerProvided && gin.IsDebugging() {
 		b.logger.Printf("QueryBinder.Bind: %v\n", requestFromQuery)
 	}
 
-	return &requestFromQuery
+	return &requestFromQuery, nil
 }
 
 func (b *QueryBinder) SetLogger(logger *log.Logger) {

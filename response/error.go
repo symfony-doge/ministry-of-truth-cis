@@ -4,20 +4,26 @@
 
 package response
 
+import (
+	"fmt"
+)
+
 // Represents type of application-layer error (domain error identifier).
 type ErrorType uint16
 
 const (
 	InternalError ErrorType = iota
+	BadRequestError
 )
 
 var responseErrorTypes = [...]string{
 	"main.internal_error",
+	"request.binder.bad_request",
 }
 
 // Implements fmt.Stringer interface.
 func (etype ErrorType) String() string {
-	if etype > InternalError {
+	if etype > BadRequestError {
 		panic("response: undefined error type.")
 	}
 
@@ -38,6 +44,10 @@ type Error struct {
 
 	// Human-friendly error description.
 	Description string `json:"description"`
+}
+
+func NewBadRequestError(param string) Error {
+	return NewError(400, BadRequestError, fmt.Sprintf("Invalid request param '%s'.", param))
 }
 
 func NewInternalError() Error {

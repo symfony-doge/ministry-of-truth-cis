@@ -38,6 +38,11 @@ func NewOkResponse() DefaultResponse {
 	return NewResponse(StatusOk, Errors{}...)
 }
 
+// Returns negative response with validation errors.
+func NewBadRequestErrorResponse(errors ...Error) DefaultResponse {
+	return NewResponse(StatusFail, errors...)
+}
+
 // Returns negative response with internal error.
 func NewInternalErrorResponse() DefaultResponse {
 	return NewResponse(StatusFail, NewInternalError())
