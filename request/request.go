@@ -15,9 +15,14 @@ var DefaultLogger *log.Logger = log.New(os.Stdout, "[request] ", log.Ldate|log.L
 
 type Locale string
 
+// Supported locales.
+var localeSupported = map[Locale]bool{
+	"ru": true,
+}
+
 // Represents expected request body content from client.
 type Request struct {
-	Locale `form:"locale" json:"locale" binding:"required"`
+	Locale `form:"locale" json:"locale" binding:"required,locale"`
 }
 
 // Implements fmt.Stringer interface.
