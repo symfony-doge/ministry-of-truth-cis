@@ -5,14 +5,23 @@
 package tag
 
 import (
+	"sync"
+
 	"github.com/symfony-doge/ministry-of-truth-cis/request"
 )
 
-// Provides tag groups from memory when possible.
+// Provides tag groups from memory when possible; thread-safe.
 type CachedGroupProvider struct {
+	// Actual data provider if cache get is missed.
 	nested GroupProvider
 
+	// In-memory storage.
 	cached map[request.Locale]Groups
+
+	// For concurrent execution safety.
+	// Guarantees that only first cache set action will take effect
+	// to all goroutines where this instance is referenced.
+	mu sync.Mutex
 }
 
 func (p *CachedGroupProvider) GetByLocale(locale request.Locale) Groups {
@@ -20,11 +29,20 @@ func (p *CachedGroupProvider) GetByLocale(locale request.Locale) Groups {
 		return fromCache
 	}
 
-	var tagGroups = p.nested.GetByLocale(locale)
+	return p.warmup(locale)
+}
 
-	p.cached[locale] = tagGroups
+func (p *CachedGroupProvider) warmup(locale request.Locale) Groups {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 
-	return tagGroups
+	if existentValue, isAlreadySet := p.cached[locale]; isAlreadySet {
+		return existentValue
+	}
+
+	p.cached[locale] = p.nested.GetByLocale(locale)
+
+	return p.cached[locale]
 }
 
 func (p *CachedGroupProvider) SetNested(nested GroupProvider) {
@@ -32,5 +50,8 @@ func (p *CachedGroupProvider) SetNested(nested GroupProvider) {
 }
 
 func NewCachedGroupProvider() *CachedGroupProvider {
-	return &CachedGroupProvider{cached: make(map[request.Locale]Groups)}
+	return &CachedGroupProvider{
+		cached: make(map[request.Locale]Groups),
+		mu:     sync.Mutex{},
+	}
 }
