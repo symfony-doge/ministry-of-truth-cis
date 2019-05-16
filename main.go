@@ -57,7 +57,7 @@ func init() {
 	gin.DefaultErrorWriter = *errLogWriter
 }
 
-func main() {
+func configureRouter() *gin.Engine {
 	var router *gin.Engine = gin.New()
 
 	router.Use(gin.Logger())
@@ -71,6 +71,12 @@ func main() {
 			tagGroupRouterGroup.POST("", handler.TagGroup().GetAll())
 		}
 	}
+
+	return router
+}
+
+func main() {
+	var router = configureRouter()
 
 	var networkAddressToListen = ":" + strconv.Itoa(ServerPort)
 	var err = router.Run(networkAddressToListen)

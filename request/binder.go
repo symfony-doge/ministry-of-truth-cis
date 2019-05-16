@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Converts request body into Request structure using gin.Context
+// Converts request body into DefaultRequest structure using gin.Context
 type Binder interface {
-	Bind(*gin.Context) (*Request, error)
+	Bind(*gin.Context) (*DefaultRequest, error)
 }

@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Converts json from request body into Request structure.
+// Converts json from request body into DefaultRequest structure.
 type JSONBinder struct {
 	logger *log.Logger
 }
 
-func (b *JSONBinder) Bind(context *gin.Context) (*Request, error) {
-	var requestFromJson Request
+func (b *JSONBinder) Bind(context *gin.Context) (*DefaultRequest, error) {
+	var requestFromJson DefaultRequest
 	var isLoggerProvided = nil != b.logger
 
 	if err := context.ShouldBindJSON(&requestFromJson); nil != err {

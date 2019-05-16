@@ -9,6 +9,7 @@ FROM golang:${GOLANG_VERSION}
 
 ARG DEPLOYMENT_PATH
 ARG TIMEZONE
+ARG MYSTEM_VERSION
 
 WORKDIR ${DEPLOYMENT_PATH}
 
@@ -18,10 +19,15 @@ COPY . .
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone && \
     date
 
-RUN go get -d -v
-RUN go mod verify
-RUN go mod vendor -v
-RUN go build -mod vendor -o /usr/local/bin/app -v
+# mystem
+RUN wget -nv http://download.cdn.yandex.net/mystem/mystem-${MYSTEM_VERSION}.tar.gz -O /tmp/mystem.tar.gz && \
+	tar -xvf /tmp/mystem.tar.gz mystem && \
+	mv mystem bin/mystem
+
+RUN go get -d -v && \
+	go mod verify && \
+	go mod vendor -v && \
+	go build -mod vendor -o /usr/local/bin/app -v
 
 USER www-data
 

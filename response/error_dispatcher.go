@@ -32,3 +32,7 @@ func (ed *DefaultErrorDispatcher) Dispatch(context *gin.Context, err error) {
 		context.AbortWithStatusJSON(http.StatusBadRequest, resp)
 	}
 }
+
+func NewDefaultErrorDispatcher() *DefaultErrorDispatcher {
+	return &DefaultErrorDispatcher{}
+}

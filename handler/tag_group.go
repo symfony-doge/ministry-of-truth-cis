@@ -27,7 +27,7 @@ type tagGroupHandler struct {
 
 // Returns all available tag groups.
 func (h *tagGroupHandler) GetAll() gin.HandlerFunc {
-	return h.handle(func(req *request.Request) interface{} {
+	return h.handle(func(req *request.DefaultRequest) interface{} {
 		var payload tag.Groups = h.groupProvider.GetByLocale(req.Locale)
 
 		return &TagGroupGetAllResponse{response.NewOkResponse(), payload}

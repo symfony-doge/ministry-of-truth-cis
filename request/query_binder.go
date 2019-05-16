@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Converts URI query parameters into Request structure.
+// Converts URI query parameters into DefaultRequest structure.
 type QueryBinder struct {
 	logger *log.Logger
 }
 
-func (b *QueryBinder) Bind(context *gin.Context) (*Request, error) {
-	var requestFromQuery Request
+func (b *QueryBinder) Bind(context *gin.Context) (*DefaultRequest, error) {
+	var requestFromQuery DefaultRequest
 	var isLoggerProvided = nil != b.logger
 
 	if err := context.ShouldBindQuery(&requestFromQuery); nil != err {

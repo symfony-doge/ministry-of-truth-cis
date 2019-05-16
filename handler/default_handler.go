@@ -12,9 +12,9 @@ import (
 	"github.com/symfony-doge/ministry-of-truth-cis/response"
 )
 
-// Callback signature for transforming a request instance
+// Callback signature for transforming a default request instance
 // to the response.
-type DoFunc func(*request.Request) interface{}
+type DoFunc func(*request.DefaultRequest) interface{}
 
 // Base handler implementation for HTTP requests.
 type DefaultHandler struct {
@@ -27,8 +27,9 @@ type DefaultHandler struct {
 	errorDispatcher response.ErrorDispatcher
 }
 
-// A shortcut with common request processing logic for simple cases.
-// Calls DoFunc if request is successfully binded and validated.
+// A shortcut with common request processing logic for cases when
+// a default request instance is enough for handler to create a response.
+// Calls specified DoFunc if default request is successfully binded and validated.
 func (h *DefaultHandler) handle(do DoFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var binder = h.binderByMethod[context.Request.Method]
@@ -59,7 +60,7 @@ func NewDefaultHandler() DefaultHandler {
 	handler.binderByMethod["POST"] = jsonBinder
 
 	// Default error handler.
-	handler.errorDispatcher = &response.DefaultErrorDispatcher{}
+	handler.errorDispatcher = response.NewDefaultErrorDispatcher()
 
 	return handler
 }

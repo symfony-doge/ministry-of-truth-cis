@@ -1,8 +1,11 @@
+analysis:
+    lemmanizer:
+        mystem:
+            executable: 'bin/mystem'
 data:
     tag:
         group:
             json: 'data/%s/tag_groups.json'
-
 log:
     main:
         filepath: 'var/logs/app/%s.log'
