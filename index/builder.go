@@ -6,6 +6,10 @@ package index
 
 type BuilderContext map[string]string
 
+const (
+	BuilderContextDescription string = "description"
+)
+
 // Builds sanity index for specified context
 // according to predefined rule.Rule set.
 type Builder interface {

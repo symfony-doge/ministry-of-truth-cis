@@ -1,5 +1,5 @@
 analysis:
-    lemmanizer:
+    lemmatizator:
         mystem:
             executable: 'bin/mystem'
 data:

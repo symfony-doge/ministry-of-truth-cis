@@ -4,10 +4,10 @@
 
 package analysis
 
-// Lemmanizer is an interface for components that performs
+// Lemmatizator is an interface for components that performs
 // semantical analysis for input text and returns a string with
 // all words replaced by their lemmas, e.g. for string "динамичная развивающаяся компания"
 // the result string will become "динамичный развивающийся компания".
-type Lemmanizer interface {
-	Lemmanize(string) string
+type Lemmatizator interface {
+	Lemmatize(string) string
 }

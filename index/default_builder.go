@@ -10,6 +10,7 @@ type DefaultBuilder struct {
 
 func (b *DefaultBuilder) Build(context BuilderContext) *Index {
 	// TODO
+	// var description = context[BuilderContextDescription]
 
 	return NewIndex()
 }

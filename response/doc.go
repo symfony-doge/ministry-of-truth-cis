@@ -2,13 +2,7 @@
 // Use of this source code is governed by a MIT license
 // that can be found in the LICENSE file.
 
+/*
+	Package response provides response model and related components.
+*/
 package response
-
-import (
-	"github.com/gin-gonic/gin"
-)
-
-// Dispatches various errors during request processing.
-type ErrorDispatcher interface {
-	Dispatch(*gin.Context, error)
-}

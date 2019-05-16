@@ -24,15 +24,21 @@ You may want to simply clone and build the application in your local Go environm
 
 ```
 $ git clone git@github.com:symfony-doge/ministry-of-truth-cis.git motcis && cd "$_"
+$ cp config/debug.yml.dist config/debug.yml
 $ go get -d
 $ go mod vendor
 $ go build -mod vendor -o build/app
-$ cp config/debug.yml.dist config/debug.yml
 ```
 
 In this case you also need to download [Yandex MyStem](https://tech.yandex.ru/mystem) manually in order to use `/index` action.
 Executable file must be placed according to path
-`analysis.lemmanizer.mystem.executable` from the application's config `config/debug.yml` (`bin/mystem` by default).
+`analysis.lemmatizator.mystem.executable` from the application's config `config/debug.yml` (`bin/mystem` by default).
+
+Ensure your app instance will work as expected:
+
+```
+$ go test ./...
+```
 
 ### API
 
