@@ -11,7 +11,7 @@ import (
 	"github.com/symfony-doge/ministry-of-truth-cis/tag"
 )
 
-type TagGroupGetAllResponse struct {
+type tagGroupGetAllResponse struct {
 	response.DefaultResponse
 
 	Payload tag.Groups `json:"tag_groups"`
@@ -19,7 +19,7 @@ type TagGroupGetAllResponse struct {
 
 // Tag group handler.
 type tagGroupHandler struct {
-	DefaultHandler
+	defaultHandler
 
 	// Provides tag groups.
 	groupProvider tag.GroupProvider
@@ -30,6 +30,6 @@ func (h *tagGroupHandler) GetAll() gin.HandlerFunc {
 	return h.handle(func(req *request.DefaultRequest) interface{} {
 		var payload tag.Groups = h.groupProvider.GetByLocale(req.Locale)
 
-		return &TagGroupGetAllResponse{response.NewOkResponse(), payload}
+		return &tagGroupGetAllResponse{response.NewOkResponse(), payload}
 	})
 }

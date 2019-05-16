@@ -27,7 +27,7 @@ type indexResponse struct {
 
 // Handler for index action.
 type indexHandler struct {
-	DefaultHandler
+	defaultHandler
 
 	// Builds sanity index by specified context.
 	indexBuilder index.Builder

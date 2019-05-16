@@ -17,10 +17,9 @@ type QueryBinder struct {
 
 func (b *QueryBinder) Bind(context *gin.Context) (*DefaultRequest, error) {
 	var requestFromQuery DefaultRequest
-	var isLoggerProvided = nil != b.logger
 
 	if err := context.ShouldBindQuery(&requestFromQuery); nil != err {
-		if isLoggerProvided {
+		if nil != b.logger {
 			b.logger.Printf("QueryBinder.Bind: %T %v\n", err, err)
 		}
 

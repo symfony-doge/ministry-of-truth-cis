@@ -14,10 +14,10 @@ import (
 
 // Callback signature for transforming a default request instance
 // to the response.
-type DoFunc func(*request.DefaultRequest) interface{}
+type doFunc func(*request.DefaultRequest) interface{}
 
 // Base handler implementation for HTTP requests.
-type DefaultHandler struct {
+type defaultHandler struct {
 	// Request method to binder mappings.
 	// Binder converts body of HTTP request
 	// into appropriate request.Request structure.
@@ -29,8 +29,8 @@ type DefaultHandler struct {
 
 // A shortcut with common request processing logic for cases when
 // a default request instance is enough for handler to create a response.
-// Calls specified DoFunc if default request is successfully binded and validated.
-func (h *DefaultHandler) handle(do DoFunc) gin.HandlerFunc {
+// Calls specified doFunc if default request is successfully binded and validated.
+func (h *defaultHandler) handle(do doFunc) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var binder = h.binderByMethod[context.Request.Method]
 
@@ -47,8 +47,20 @@ func (h *DefaultHandler) handle(do DoFunc) gin.HandlerFunc {
 	}
 }
 
-func NewDefaultHandler() DefaultHandler {
-	var handler DefaultHandler
+func (h *defaultHandler) MethodNotAllowed() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.JSON(http.StatusOK, response.NewMethodNotAllowedErrorResponse())
+	}
+}
+
+func (h *defaultHandler) RouteNotFound() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		context.JSON(http.StatusOK, response.NewRouteNotFoundErrorResponse())
+	}
+}
+
+func newDefaultHandler() defaultHandler {
+	var handler defaultHandler
 
 	// Default request binders.
 	var jsonBinder, queryBinder = &request.JSONBinder{}, &request.QueryBinder{}

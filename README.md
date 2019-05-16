@@ -61,5 +61,30 @@ Microservice allows you to use `POST` or `GET` methods, both json and query para
 such as log filenames and data directory. By default, the application writes to `var/logs/app/debug.log`
 and `var/logs/app/debug-error.log`.
 
+The microservice will throw an error if you are not a gentleman.
+Stay patient and explore a table below with error codes and their meaning.
+
+| Code | Type | Description |
+| :--- | :--- | :--- |
+| 1 | `main.handler_not_found` | No handler implemented for requested URI path. |
+| 2 | `main.method_not_allowed` | Handler for requested URI path exists, but HTTP method is not allowed. |
+| 3 | `request.binder.bad_request` | Whenever a request is not filled with valid parameters. For example, locale is not specified or not supported. |
+| 4 | `main.internal_error` | Something terrible happened. Stay safe. |
+
+Example of response with negative status:
+
+```
+{
+	"status": "FAIL",
+	"errors": [
+		{
+			"code": 3,
+			"type": "request.binder.bad_request",
+			"description": "Invalid request param 'Locale'."
+		}
+	]
+}
+```
+
 ### Changelog
 All notable changes to this project will be documented in [CHANGELOG.md](CHANGELOG.md).

@@ -17,10 +17,9 @@ type JSONBinder struct {
 
 func (b *JSONBinder) Bind(context *gin.Context) (*DefaultRequest, error) {
 	var requestFromJson DefaultRequest
-	var isLoggerProvided = nil != b.logger
 
 	if err := context.ShouldBindJSON(&requestFromJson); nil != err {
-		if isLoggerProvided {
+		if nil != b.logger {
 			b.logger.Printf("JSONBinder.Bind: %T %v\n", err, err)
 		}
 

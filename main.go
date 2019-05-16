@@ -63,14 +63,23 @@ func configureRouter() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(middleware.Recovery())
 
-	router.POST("/index", handler.Index().Index())
+	router.NoRoute(handler.Default().RouteNotFound())
+	router.NoMethod(handler.Default().MethodNotAllowed())
 
-	var tagRouterGroup *gin.RouterGroup = router.Group("/tag")
+	var rootRouterGroup *gin.RouterGroup = router.Group("")
 	{
-		var tagGroupRouterGroup *gin.RouterGroup = tagRouterGroup.Group("/groups")
+		var indexRouterGroup *gin.RouterGroup = rootRouterGroup.Group("/index")
 		{
-			tagGroupRouterGroup.GET("", handler.TagGroup().GetAll())
-			tagGroupRouterGroup.POST("", handler.TagGroup().GetAll())
+			indexRouterGroup.POST("", handler.Index().Index())
+		}
+
+		var tagRouterGroup *gin.RouterGroup = rootRouterGroup.Group("/tag")
+		{
+			var tagGroupRouterGroup *gin.RouterGroup = tagRouterGroup.Group("/groups")
+			{
+				tagGroupRouterGroup.GET("", handler.TagGroup().GetAll())
+				tagGroupRouterGroup.POST("", handler.TagGroup().GetAll())
+			}
 		}
 	}
 

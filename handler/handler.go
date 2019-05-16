@@ -10,9 +10,20 @@ import (
 )
 
 var (
+	defaultH  *defaultHandler
 	indexH    *indexHandler
 	tagGroupH *tagGroupHandler
 )
+
+func Default() *defaultHandler {
+	if nil != defaultH {
+		return defaultH
+	}
+
+	defaultH = &defaultHandler{}
+
+	return defaultH
+}
 
 // Factory method for index handler.
 func Index() *indexHandler {
@@ -21,7 +32,7 @@ func Index() *indexHandler {
 	}
 
 	indexH = &indexHandler{}
-	indexH.DefaultHandler = NewDefaultHandler()
+	indexH.defaultHandler = newDefaultHandler()
 
 	// Index builder.
 	indexH.indexBuilder = index.NewDefaultBuilder()
@@ -36,7 +47,7 @@ func TagGroup() *tagGroupHandler {
 	}
 
 	tagGroupH = &tagGroupHandler{}
-	tagGroupH.DefaultHandler = NewDefaultHandler()
+	tagGroupH.defaultHandler = newDefaultHandler()
 
 	// Group provider.
 	var jsonGroupProvider = tag.NewJSONGroupProvider()

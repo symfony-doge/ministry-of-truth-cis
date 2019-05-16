@@ -43,6 +43,16 @@ func NewBadRequestErrorResponse(errors ...Error) DefaultResponse {
 	return NewResponse(StatusFail, errors...)
 }
 
+// Returns negative response with method not allowed error.
+func NewMethodNotAllowedErrorResponse() DefaultResponse {
+	return NewResponse(StatusFail, NewMethodNotAllowedError())
+}
+
+// Returns negative response with handler not found error.
+func NewRouteNotFoundErrorResponse() DefaultResponse {
+	return NewResponse(StatusFail, NewRouteNotFoundError())
+}
+
 // Returns negative response with internal error.
 func NewInternalErrorResponse() DefaultResponse {
 	return NewResponse(StatusFail, NewInternalError())

@@ -8,22 +8,36 @@ import (
 	"fmt"
 )
 
+// Represents code of application-layer error.
+type ErrorCode uint64
+
+const (
+	CodeRouteNotFoundError ErrorCode = 1 + iota
+	CodeMethodNotAllowedError
+	CodeBadRequestError
+	CodeInternalError
+)
+
 // Represents type of application-layer error (domain error identifier).
 type ErrorType uint16
 
 const (
-	InternalError ErrorType = iota
+	RouteNotFoundError ErrorType = iota
+	MethodNotAllowedError
 	BadRequestError
+	InternalError
 )
 
 var responseErrorTypes = [...]string{
-	"main.internal_error",
+	"main.handler_not_found",
+	"main.method_not_allowed",
 	"request.binder.bad_request",
+	"main.internal_error",
 }
 
 // Implements fmt.Stringer interface.
 func (etype ErrorType) String() string {
-	if etype > BadRequestError {
+	if etype > InternalError {
 		panic("response: undefined error type.")
 	}
 
@@ -37,7 +51,7 @@ type Errors []Error
 type Error struct {
 	// Not an HTTP code, but a code of application-layer error.
 	// Any package or component can provide its error codes.
-	Code int `json:"code"`
+	Code ErrorCode `json:"code"`
 
 	// Package/component path and other context for debugging.
 	Type string `json:"type"`
@@ -47,13 +61,21 @@ type Error struct {
 }
 
 func NewBadRequestError(param string) Error {
-	return NewError(400, BadRequestError, fmt.Sprintf("Invalid request param '%s'.", param))
+	return NewError(CodeBadRequestError, BadRequestError, fmt.Sprintf("Invalid request param '%s'.", param))
+}
+
+func NewMethodNotAllowedError() Error {
+	return NewError(CodeMethodNotAllowedError, MethodNotAllowedError, "Method is not allowed.")
+}
+
+func NewRouteNotFoundError() Error {
+	return NewError(CodeRouteNotFoundError, RouteNotFoundError, "Handler is not found.")
 }
 
 func NewInternalError() Error {
-	return NewError(500, InternalError, "Internal error.")
+	return NewError(CodeInternalError, InternalError, "Internal error.")
 }
 
-func NewError(code int, etype ErrorType, description string) Error {
+func NewError(code ErrorCode, etype ErrorType, description string) Error {
 	return Error{code, etype.String(), description}
 }
