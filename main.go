@@ -63,6 +63,8 @@ func configureRouter() *gin.Engine {
 	router.Use(gin.Logger())
 	router.Use(middleware.Recovery())
 
+	router.POST("/index", handler.Index().Index())
+
 	var tagRouterGroup *gin.RouterGroup = router.Group("/tag")
 	{
 		var tagGroupRouterGroup *gin.RouterGroup = tagRouterGroup.Group("/groups")

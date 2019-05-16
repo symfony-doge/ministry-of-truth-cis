@@ -7,6 +7,7 @@ echo '[dev] Applying environment variables and configs...'
 cp .env.dev.dist .env
 cp Dockerfile.dev.dist Dockerfile
 cp docker-compose.dev.yml.dist docker-compose.yml
+cp config/debug.yml.dist config/debug.yml
 source .env
 echo
 

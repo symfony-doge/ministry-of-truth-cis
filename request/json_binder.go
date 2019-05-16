@@ -27,10 +27,6 @@ func (b *JSONBinder) Bind(context *gin.Context) (*DefaultRequest, error) {
 		return nil, err
 	}
 
-	if isLoggerProvided && gin.IsDebugging() {
-		b.logger.Printf("JSONBinder.Bind: %v\n", requestFromJson)
-	}
-
 	return &requestFromJson, nil
 }
 

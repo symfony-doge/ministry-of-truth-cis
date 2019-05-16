@@ -27,10 +27,6 @@ func (b *QueryBinder) Bind(context *gin.Context) (*DefaultRequest, error) {
 		return nil, err
 	}
 
-	if isLoggerProvided && gin.IsDebugging() {
-		b.logger.Printf("QueryBinder.Bind: %v\n", requestFromQuery)
-	}
-
 	return &requestFromQuery, nil
 }
 

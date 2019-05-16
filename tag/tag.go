@@ -11,3 +11,14 @@ import (
 
 // Package-level logger.
 var DefaultLogger *log.Logger = log.New(os.Stdout, "[tag] ", log.Ldate|log.Ltime|log.Lshortfile)
+
+type Tags []Tag
+
+// Represents search tag.
+type Tag struct {
+	Name        string `json:"name"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Color       string `json:"color"`
+	ImageUrl    string `json:"image_url"`
+}
