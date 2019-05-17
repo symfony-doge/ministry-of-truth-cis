@@ -5,8 +5,14 @@
 package index
 
 import (
+	"log"
+	"os"
+
 	"github.com/symfony-doge/ministry-of-truth-cis/tag"
 )
+
+// Package-level logger.
+var DefaultLogger *log.Logger = log.New(os.Stdout, "[index] ", log.Ldate|log.Ltime|log.Lshortfile)
 
 // Represents sanity index.
 type Index struct {
@@ -20,5 +26,8 @@ type Index struct {
 // TODO: setters.
 
 func NewIndex() *Index {
-	return &Index{Value: 0.0, Tags: make(map[string]tag.Tags)}
+	return &Index{
+		Value: 0.0,
+		Tags:  make(map[string]tag.Tags),
+	}
 }

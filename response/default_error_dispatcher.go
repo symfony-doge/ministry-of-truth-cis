@@ -19,8 +19,8 @@ func (ed *DefaultErrorDispatcher) Dispatch(context *gin.Context, err error) {
 	if errFields, isValidationError := err.(validator.ValidationErrors); isValidationError {
 		var errors Errors
 
-		for _, errField := range errFields {
-			errors = append(errors, NewBadRequestError(errField.Name))
+		for key := range errFields {
+			errors = append(errors, NewBadRequestError(errFields[key].Name))
 		}
 
 		resp := NewBadRequestErrorResponse(errors...)

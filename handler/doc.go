@@ -4,5 +4,8 @@
 
 /*
 	Package handler contains callbacks for processing HTTP requests.
+
+	NOTE: components in this package is not thread-safe and must be
+	instantiated and configured before any business logic.
 */
 package handler

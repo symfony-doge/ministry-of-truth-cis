@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	expectedResponseValidationErrors = "{\"status\":\"FAIL\",\"errors\":[{\"code\":400, \"description\":\"Invalid request param 'param1'.\", \"type\":\"request.binder.bad_request\"}]}"
+	expectedResponseValidationErrors = "{\"status\":\"FAIL\",\"errors\":[{\"code\":3, \"description\":\"Invalid request param 'param1'.\", \"type\":\"request.binder.bad_request\"}]}"
 )
 
 type TestResponseWriter struct {

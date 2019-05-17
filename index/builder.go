@@ -11,7 +11,7 @@ const (
 )
 
 // Builds sanity index for specified context
-// according to predefined rule.Rule set.
+// according to predefined rules set (see "rule" package).
 type Builder interface {
 	Build(BuilderContext) *Index
 }

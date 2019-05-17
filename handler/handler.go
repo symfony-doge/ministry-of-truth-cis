@@ -35,7 +35,7 @@ func Index() *indexHandler {
 	indexH.defaultHandler = newDefaultHandler()
 
 	// Index builder.
-	indexH.indexBuilder = index.NewDefaultBuilder()
+	indexH.indexBuilder = index.NewConcurrentBuilder()
 
 	return indexH
 }
