@@ -23,20 +23,24 @@ type ConcurrentBuilder struct {
 }
 
 func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
-	var description string = context[BuilderContextDescription]
+	var ruleMatchTask = rule.NewMatchTask()
 
-	descriptionLemmatized, lErr := b.textLemmatizer.Lemmatize(description)
-	if nil != lErr {
-		b.logger.Println(lErr)
+	for contextMarker, text := range context {
+		textLemmatized, lErr := b.textLemmatizer.Lemmatize(text)
+		if nil != lErr {
+			b.logger.Println(lErr)
 
-		panic("index: unable to lemmatize text.")
+			panic("index: unable to lemmatize a text.")
+		}
+
+		ruleMatchTask.AddSentence(contextMarker, textLemmatized)
 	}
 
-	applicableRules, bErr := b.ruleProcessor.FindMatch(descriptionLemmatized)
+	applicableRules, bErr := b.ruleProcessor.FindMatch(ruleMatchTask)
 	if nil != bErr {
 		b.logger.Println(bErr)
 
-		panic("index: unable to find applicable rules for the text.")
+		panic("index: unable to find applicable rules for text.")
 	}
 
 	// TODO: index calculation by rules specifications.

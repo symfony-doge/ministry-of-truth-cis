@@ -37,8 +37,8 @@ type Event struct {
 	rules Rules
 }
 
-func NewOccurrenceFoundEvent() *Event {
+func NewOccurrenceFoundEvent() Event {
 	// TODO
 
-	return &Event{OccurrenceFoundEvent, Rules{}}
+	return Event{OccurrenceFoundEvent, Rules{}}
 }

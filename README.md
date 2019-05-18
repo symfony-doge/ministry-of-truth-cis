@@ -1,6 +1,6 @@
 # Ministry of Truth CIS
 
-Sanity index provider for vacancy aggregation engine [symfony-doge/veslo](https://github.com/symfony-doge/veslo).
+Sanity index provider for the vacancy aggregation engine [symfony-doge/veslo](https://github.com/symfony-doge/veslo).
 
 An extremely fast microservice that takes a text and returns sanity index (SI) for it w/ search tags.
 Name is a humorous reference to George Orwell's [1984](https://en.wikipedia.org/wiki/Nineteen_Eighty-Four).
@@ -61,7 +61,7 @@ Microservice allows you to use `POST` or `GET` methods, both json and query para
 such as log filenames and data directory. By default, the application writes to `var/logs/app/debug.log`
 and `var/logs/app/debug-error.log`.
 
-The microservice will throw an error if you are not a gentleman.
+The microservice will throw an error if you are not a gentleman :smirk:.
 Stay patient and explore a table below with error codes and their meaning.
 
 | Code | Type | Description |

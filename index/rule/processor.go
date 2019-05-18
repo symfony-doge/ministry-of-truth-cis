@@ -4,16 +4,8 @@
 
 package rule
 
-// Determines which rules has match for a given text
+// Determines which rules have match for a given text
 // and returns a result set.
 type Processor interface {
-	FindMatch(string) (Rules, error)
-}
-
-// Can be thrown by a processor that uses a rule events system;
-// indicates that an event listener has not been initialized.
-type EventListenerNotStartedError struct{}
-
-func (err EventListenerNotStartedError) Error() string {
-	return "Unable to FindMatch. Event listener is not started."
+	FindMatch(MatchTask) (Rules, error)
 }

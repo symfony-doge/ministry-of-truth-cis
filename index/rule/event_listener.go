@@ -5,11 +5,12 @@
 package rule
 
 // ConsumeFunc is a callback signature for managing received events.
-// It receives a read-only copy of a rule event.
+// It receives a read-only copy of a rule event from listening session.
 type ConsumeFunc func(Event)
 
 // Listens rule events from workers
 // and calls specified closure for processing.
+// Returns a channel that should be used by workers to push their events.
 type EventListener interface {
 	Listen(ConsumeFunc) (chan<- Event, error)
 }
