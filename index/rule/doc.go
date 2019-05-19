@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 
 /*
-	Package rule contains a set of rules for sanity index calculation.
+	Package rule contains a set of rules for sanity index calculation and
+	algorithms for rule matching against text sentences.
 */
 package rule

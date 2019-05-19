@@ -17,9 +17,9 @@ func (err EventListenerNotStartedError) Error() string {
 }
 
 // Can be thrown if workers for parallel execution is not started.
-type WorkersNotStartedError struct{}
+type WorkerNotStartedError struct{}
 
-func (err WorkersNotStartedError) Error() string {
+func (err WorkerNotStartedError) Error() string {
 	return "Unable to FindMatch. Workers are not started."
 }
 
@@ -49,7 +49,7 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 	if nil != wpErr {
 		p.logger.Println(wpErr)
 
-		return nil, WorkersNotStartedError{}
+		return nil, WorkerNotStartedError{}
 	}
 
 	// Waiting while workers do their parts of task.
@@ -65,6 +65,7 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 }
 
 // Fires each time when a new rule event is available for processing.
+// It is a result collecting/merging function for separate task parts.
 func (p *ConcurrentProcessor) onRuleEvent(event Event) {
 	// TODO results merging
 

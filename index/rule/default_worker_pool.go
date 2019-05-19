@@ -6,6 +6,7 @@ package rule
 
 import (
 	"context"
+	"log"
 	"runtime"
 	"sync"
 )
@@ -36,7 +37,7 @@ func (wp *DefaultWorkerPool) Distribute(
 		return nil, err
 	}
 
-	return wp.start()
+	return wp.runWorkers()
 }
 
 // Creates workers and sets their execution contexts.
@@ -69,18 +70,19 @@ func (wp *DefaultWorkerPool) prepareWorkers(
 
 // Runs all prepared workers and returns a wait group to directly
 // track their activity.
-func (wp *DefaultWorkerPool) start() (*sync.WaitGroup, error) {
+func (wp *DefaultWorkerPool) runWorkers() (*sync.WaitGroup, error) {
 	var workerCount = len(wp.workers)
 
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(workerCount)
 
 	for workerNumber := range wp.workers {
-		go func() {
+		// We should not capture loop variables in closure,
+		// instead, we pass a copy as an argument.
+		go func(wn int) {
 			defer waitGroup.Done()
-
-			wp.workers[workerNumber].Run()
-		}()
+			wp.workers[wn].Run()
+		}(workerNumber)
 	}
 
 	return &waitGroup, nil

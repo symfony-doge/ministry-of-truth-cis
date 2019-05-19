@@ -10,7 +10,6 @@ import (
 
 // Worker factory is responsible for worker instantiation.
 type WorkerFactory interface {
-	// Receives an input text and a channel for worker events.
 	CreateFor(ConcurrentTask) (Worker, error)
 }
 

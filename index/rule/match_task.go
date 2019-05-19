@@ -26,6 +26,7 @@ func (t MatchTask) AddSentence(contextMarker string, text string) {
 // Implements ConcurrentTask interface.
 func (t MatchTask) Split(partsNum int) []context.Context {
 	// TODO
+	// considering special case "1".
 
 	var parts = make([]context.Context, partsNum)
 
