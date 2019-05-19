@@ -13,6 +13,9 @@ const (
 	maxHistoryEntries = 10
 
 	// Buffer size for events channel.
+	// In ideal case we should not block workers during their communication
+	// with listener, but it depends on concrete task and how often they
+	// will communicate. This value is a medium.
 	notifyChannelBufferSize = 1 << 3
 )
 
@@ -37,8 +40,8 @@ func (l *DefaultEventListener) Listen(fn ConsumeFunc) (chan<- Event, error) {
 	go func() {
 		for {
 			select {
-			// Blocks whenever a new event is available to consume or channel
-			// becomes closed.
+			// Blocks default flow whenever a new event is available to consume
+			// or channel becomes closed.
 			case event, isChannelOpen := <-notifyChannel:
 				if !isChannelOpen {
 					// We should set channel to nil, to ensure it will not block

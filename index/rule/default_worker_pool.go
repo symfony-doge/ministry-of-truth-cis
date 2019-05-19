@@ -5,7 +5,6 @@
 package rule
 
 import (
-	"context"
 	"log"
 	"runtime"
 	"sync"
@@ -20,20 +19,24 @@ const (
 // Creates a worker for each available CPU, that can be executing simultaneously,
 // and makes them process a part of specified task.
 type DefaultWorkerPool struct {
+	logger *log.Logger
+
+	// Encapsulates split algorithms for concurrent tasks.
+	taskSplitter *TaskSplitter
+
+	// Instantiates workers.
 	workerFactory WorkerFactory
 
 	workers []Worker
 }
 
-func (wp *DefaultWorkerPool) SetWorkerFactory(wf WorkerFactory) {
-	wp.workerFactory = wf
-}
-
 func (wp *DefaultWorkerPool) Distribute(
-	task ConcurrentTask,
+	task interface{},
 	notifyChannel chan<- Event,
 ) (*sync.WaitGroup, error) {
 	if err := wp.prepareWorkers(task, notifyChannel); nil != err {
+		wp.logger.Println(err)
+
 		return nil, err
 	}
 
@@ -42,7 +45,7 @@ func (wp *DefaultWorkerPool) Distribute(
 
 // Creates workers and sets their execution contexts.
 func (wp *DefaultWorkerPool) prepareWorkers(
-	task ConcurrentTask,
+	task interface{},
 	notifyChannel chan<- Event,
 ) error {
 	var workerCount int = runtime.GOMAXPROCS(0) - executionFlowsReserved
@@ -51,7 +54,10 @@ func (wp *DefaultWorkerPool) prepareWorkers(
 	}
 
 	wp.workers = make([]Worker, workerCount)
-	var contexts []context.Context = task.Split(workerCount)
+	var contexts, tsErr = wp.taskSplitter.Split(task, workerCount)
+	if nil != tsErr {
+		return tsErr
+	}
 
 	for workerNumber := range wp.workers {
 		var worker, wfErr = wp.workerFactory.CreateFor(task)
@@ -77,8 +83,8 @@ func (wp *DefaultWorkerPool) runWorkers() (*sync.WaitGroup, error) {
 	waitGroup.Add(workerCount)
 
 	for workerNumber := range wp.workers {
-		// We should not capture loop variables in closure,
-		// instead, we pass a copy as an argument.
+		// We should not capture loop variables in closure, goroutine will
+		// see only last assigned value; instead, we pass a copy as an argument.
 		go func(wn int) {
 			defer waitGroup.Done()
 			wp.workers[wn].Run()
@@ -90,6 +96,8 @@ func (wp *DefaultWorkerPool) runWorkers() (*sync.WaitGroup, error) {
 
 func NewDefaultWorkerPool() *DefaultWorkerPool {
 	return &DefaultWorkerPool{
+		logger:        DefaultLogger,
+		taskSplitter:  TaskSplitterInstance(),
 		workerFactory: DefaultWorkerFactoryInstance(),
 	}
 }

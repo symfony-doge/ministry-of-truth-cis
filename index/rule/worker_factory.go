@@ -9,15 +9,16 @@ import (
 )
 
 // Worker factory is responsible for worker instantiation.
+// It receives a task instance and should return a valid worker.
 type WorkerFactory interface {
-	CreateFor(ConcurrentTask) (Worker, error)
+	CreateFor(interface{}) (Worker, error)
 }
 
-type UndefinedTaskError struct {
-	task ConcurrentTask
+type UndefinedWorkerError struct {
+	task interface{}
 }
 
 // Implements error interface.
-func (err UndefinedTaskError) Error() string {
+func (err UndefinedWorkerError) Error() string {
 	return fmt.Sprintf("Worker for task is not defined (task=%T)", err.task)
 }

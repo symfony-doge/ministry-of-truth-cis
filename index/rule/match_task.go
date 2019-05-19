@@ -6,7 +6,21 @@ package rule
 
 import (
 	"context"
+	"strings"
 )
+
+// Represent a sentence from text entry, used to divide a whole text into
+// small pieces (with presaved word order) suitable for concurrent processing.
+type Sentence struct {
+	// Offset in words from start of the text within a single context entry.
+	// e.g. for entry contextMarker->text {"description": "Test, description"}
+	// we can create a Sentence{"offset": 0, "words": ["Test,"]}
+	// and another one Sentence{"offset": 1, "text": ["Description"]}
+	offset int
+
+	// Part of divided text entry as a set of ordered words.
+	words []string
+}
 
 // Describes a task for a rule processor (rules matching against a text).
 type MatchTask struct {
@@ -15,30 +29,40 @@ type MatchTask struct {
 	// Some rules may check a specific context marker, to be applicable
 	// to the whole text, e.g. a word is expected to be in the job title only,
 	// then such rule becomes "matched".
-	textByContextMarker map[string]string
+	sentencesByContextMarker map[string]Sentence
 }
 
-// Adds a new text sentence under specific context.
+// Adds a new text sentence under specific context with zero word offset.
 func (t MatchTask) AddSentence(contextMarker string, text string) {
-	t.textByContextMarker[contextMarker] = text
+	var words = strings.Fields(text)
+	var sentence = Sentence{0, words}
+
+	t.sentencesByContextMarker[contextMarker] = sentence
 }
 
-// Implements ConcurrentTask interface.
-func (t MatchTask) Split(partsNum int) []context.Context {
-	// TODO
-	// considering special case "1".
+// Adds a new text sentence under specific context with specified word offset.
+// Practically used by splitters to divide a task into small derived parts.
+func (t MatchTask) addSentenceWithOffset(contextMarker string, text string, offset int) {
+	var words = strings.Fields(text)
+	var sentence = Sentence{offset, words}
 
-	var parts = make([]context.Context, partsNum)
-
-	for partNum := range parts {
-		parts[partNum] = context.TODO()
-	}
-
-	return parts
+	t.sentencesByContextMarker[contextMarker] = sentence
 }
 
 func NewMatchTask() MatchTask {
 	return MatchTask{
-		textByContextMarker: make(map[string]string),
+		sentencesByContextMarker: make(map[string]Sentence),
 	}
+}
+
+var matchTaskKey taskKey
+
+func NewMatchTaskContext(task MatchTask) context.Context {
+	return context.WithValue(context.Background(), matchTaskKey, task)
+}
+
+func MatchTaskFromContext(context context.Context) (MatchTask, bool) {
+	task, isMatchTask := context.Value(matchTaskKey).(MatchTask)
+
+	return task, isMatchTask
 }

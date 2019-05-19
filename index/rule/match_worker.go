@@ -11,13 +11,14 @@ import (
 // Performs rule matching routine against a part of text sentence
 // using settings from the specified context.
 type MatchWorker struct {
-	partialMatchTask context.Context
+	// Context with match task and any additional settings for worker.
+	context context.Context
 
 	channelsToNotify []chan<- Event
 }
 
 func (w *MatchWorker) SetContext(context context.Context) {
-	w.partialMatchTask = context
+	w.context = context
 }
 
 func (w *MatchWorker) AddNotifyChannel(notifyChannels ...chan<- Event) {
@@ -25,7 +26,13 @@ func (w *MatchWorker) AddNotifyChannel(notifyChannels ...chan<- Event) {
 }
 
 func (w *MatchWorker) Run() {
-	// TODO
+	var matchTask, isMatchTask = MatchTaskFromContext(w.context)
+	if !isMatchTask {
+		panic("context: match task context misuse.")
+	}
+
+	// TODO: do work.
+	_ = matchTask
 
 	for _, notifyChannel := range w.channelsToNotify {
 		notifyChannel <- NewOccurrenceFoundEvent()

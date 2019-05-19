@@ -14,12 +14,12 @@ var defaultWorkerFactoryOnce sync.Once
 
 type DefaultWorkerFactory struct{}
 
-func (wf *DefaultWorkerFactory) CreateFor(task ConcurrentTask) (Worker, error) {
+func (wf *DefaultWorkerFactory) CreateFor(task interface{}) (Worker, error) {
 	switch task.(type) {
 	case MatchTask:
 		return NewMatchWorker(), nil
 	default:
-		return nil, UndefinedTaskError{task}
+		return nil, UndefinedWorkerError{task}
 	}
 }
 

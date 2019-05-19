@@ -9,13 +9,10 @@ import (
 )
 
 // Splits a task to separate parts and distributes their execution
-// among all available workers. Task must implement ConcurrentTask interface
-// with Split method.
+// among all available workers; related task splitter and a factory method
+// to construct appropriate worker should be defined.
 type WorkerPool interface {
-	// Sets a worker factory that creates workers for specific tasks.
-	SetWorkerFactory(WorkerFactory)
-
-	// Receives an input text and a channel for worker events.
+	// Receives a concurrent task and a channel for worker events.
 	// Returns a wait group instance if workers are successfully started.
-	Distribute(ConcurrentTask, chan<- Event) (*sync.WaitGroup, error)
+	Distribute(interface{}, chan<- Event) (*sync.WaitGroup, error)
 }

@@ -4,6 +4,9 @@
 
 package rule
 
+// Key for storing a task instance as a value within context.Context.
+type taskKey int
+
 // Determines which rules have match for a given text
 // and returns a result set.
 type Processor interface {
