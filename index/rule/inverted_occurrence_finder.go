@@ -14,16 +14,18 @@ var invertedOccurrenceFinderOnce sync.Once
 
 // A component that uses an inverted index data structure to search
 // stop-words and check when a rule is applicable to the text or not.
-type InvertedOccurrenceFinder struct{}
+type InvertedOccurrenceFinder struct {
+	invertedIndex *InvertedIndex
+}
 
-func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker string) Rules {
-	// TODO: search algorithm.
-
-	return Rules{}
+func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker string) (Rules, bool) {
+	return of.invertedIndex.Lookup(word, contextMarker)
 }
 
 func NewInvertedOccurrenceFinder() *InvertedOccurrenceFinder {
-	return &InvertedOccurrenceFinder{}
+	return &InvertedOccurrenceFinder{
+		invertedIndex: InvertedIndexInstance(),
+	}
 }
 
 func InvertedOccurrenceFinderInstance() *InvertedOccurrenceFinder {

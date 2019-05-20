@@ -21,7 +21,7 @@ var invertedIndexInstance *InvertedIndex
 
 var invertedIndexOnce sync.Once
 
-type rulesByWord map[string][]*Rule
+type rulesByWord map[string]Rules
 
 type wordsByContext map[string]rulesByWord
 
@@ -41,7 +41,7 @@ type InvertedIndex struct {
 }
 
 // Checks if word is binded to rules or not within specified context.
-func (i *InvertedIndex) Lookup(word, contextMarker string) ([]*Rule, bool) {
+func (i *InvertedIndex) Lookup(word, contextMarker string) (Rules, bool) {
 	if _, isContextMarkerFound := i.wordsByContext[contextMarker]; !isContextMarkerFound {
 		return nil, false
 	}
@@ -97,7 +97,7 @@ func (i *InvertedIndex) buildRulesByWords(words []string, rule *Rule) rulesByWor
 	var rbw = make(rulesByWord)
 
 	for _, word := range words {
-		rbw[word] = []*Rule{rule}
+		rbw[word] = Rules{rule}
 	}
 
 	return rbw

@@ -5,8 +5,8 @@
 package rule
 
 // Represents a component that can find applicable rules for the given word
-// It is not performs any specific context validations, etc.;
-// just a word occurrence checks.
+// and context marker; second retval will be positive if rules are found
+// for the given word.
 type OccurrenceFinder interface {
-	FindApplicableRules(word, contextMarker string) Rules
+	FindApplicableRules(word, contextMarker string) (Rules, bool)
 }
