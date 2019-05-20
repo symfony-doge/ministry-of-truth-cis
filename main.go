@@ -9,12 +9,11 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/symfony-doge/ministry-of-truth-cis/index/rule"
-
 	"github.com/gin-gonic/gin"
 	jjw "github.com/spf13/jwalterweatherman"
 	"github.com/symfony-doge/ministry-of-truth-cis/config"
 	"github.com/symfony-doge/ministry-of-truth-cis/handler"
+	"github.com/symfony-doge/ministry-of-truth-cis/index/rule"
 	applog "github.com/symfony-doge/ministry-of-truth-cis/log"
 	"github.com/symfony-doge/ministry-of-truth-cis/middleware"
 )

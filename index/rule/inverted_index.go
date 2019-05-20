@@ -7,7 +7,6 @@ package rule
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"sync"
 
 	"github.com/symfony-doge/ministry-of-truth-cis/config"
@@ -27,7 +26,7 @@ type rulesByWord map[string][]*Rule
 type wordsByContext map[string]rulesByWord
 
 // Represents a data structure in which words or separate letters are
-// associated with rules. Provides O(log n) lookup method.
+// associated with rules. Provides O(1) for lookup method.
 // Example for context "description" and stop-sentence "this is a test".
 // {
 //     "description": {
@@ -41,7 +40,18 @@ type InvertedIndex struct {
 	wordsByContext
 }
 
-// TODO building & lookup api, initialization in main func at start.
+// Checks if word is binded to rules or not within specified context.
+func (i *InvertedIndex) Lookup(word, contextMarker string) ([]*Rule, bool) {
+	if _, isContextMarkerFound := i.wordsByContext[contextMarker]; !isContextMarkerFound {
+		return nil, false
+	}
+
+	if _, isWordFound := i.wordsByContext[contextMarker][word]; !isWordFound {
+		return nil, false
+	}
+
+	return i.wordsByContext[contextMarker][word], true
+}
 
 func (i *InvertedIndex) Build() error {
 	rules, loadErr := i.loadRules()
