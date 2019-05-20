@@ -3,7 +3,10 @@ analysis:
         mystem:
             executable: 'bin/mystem'
 data:
+    rule:
+        json: 'data/rules.json'
     tag:
+        json: 'data/%s/tags.json'
         group:
             json: 'data/%s/tag_groups.json'
 log:

@@ -4,20 +4,22 @@
 		"specification": [
 			{
 				"words": ["динамично", "динамичный"],
+				"contexts": ["description"],
 				"conditions": [
 					{
-						"offsetLeftMax": -1
+						"offsetPreviousMax": -1
 					}
 				]
 			},
 			{
 				"words": ["развиваться", "развивающийся"],
+				"contexts": ["description"],
 				"conditions": [
 					{
-						"offsetLeftMax": -1
+						"offsetPreviousMax": -1
 					}
 				]
-			},
+			}
 		],
 		"tags": ["young_dynamic"]
 	}

@@ -9,6 +9,8 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/symfony-doge/ministry-of-truth-cis/index/rule"
+
 	"github.com/gin-gonic/gin"
 	jjw "github.com/spf13/jwalterweatherman"
 	"github.com/symfony-doge/ministry-of-truth-cis/config"
@@ -55,6 +57,13 @@ func init() {
 		log.Fatal("Unable to init error log.")
 	}
 	gin.DefaultErrorWriter = *errLogWriter
+
+	// Warming up rules index for matching word occurrences (index action).
+	var rulesIndex = rule.InvertedIndexInstance()
+	if riBuildErr := rulesIndex.Build(); nil != riBuildErr {
+		log.Println(riBuildErr)
+		log.Fatal("Unable to build rules index.")
+	}
 }
 
 func configureRouter() *gin.Engine {
