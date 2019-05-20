@@ -6,6 +6,7 @@ package rule
 
 import (
 	"context"
+	"log"
 )
 
 // Performs rule matching routine against a part of text sentence
@@ -31,20 +32,24 @@ func (w *MatchWorker) AddNotifyChannel(notifyChannels ...chan<- Event) {
 func (w *MatchWorker) Run() {
 	var matchTask, isMatchTask = MatchTaskFromContext(w.context)
 	if !isMatchTask {
-		panic("context: match task context misuse.")
+		panic("rule: match task context misuse.")
 	}
 
 	for contextMarker, sentence := range matchTask.sentenceByContextMarker {
-		for _, word := range sentence.words {
-			//if rules := w.occurrenceFinder.FindApplicableRules(word, contextMarker) {
-			// TODO
-			//}
-			_, _ = contextMarker, word
-		}
-	}
+		for wordOffset, word := range sentence.words {
+			rules, isOccurrenceFound := w.occurrenceFinder.FindApplicableRules(word, contextMarker)
 
-	for _, notifyChannel := range w.channelsToNotify {
-		notifyChannel <- NewOccurrenceFoundEvent()
+			if !isOccurrenceFound {
+				continue
+			}
+
+			var context = OccurrenceFoundContext{word, contextMarker, wordOffset}
+			var occurrenceFoundEvent = NewOccurrenceFoundEvent(rules, context)
+
+			for _, notifyChannel := range w.channelsToNotify {
+				notifyChannel <- occurrenceFoundEvent
+			}
+		}
 	}
 }
 

@@ -35,10 +35,21 @@ type Event struct {
 
 	// A set of rules that has been affected by the event.
 	rules Rules
+
+	// Additional data based on event type, e.g. OccurrenceFoundContext.
+	Payload interface{}
 }
 
-func NewOccurrenceFoundEvent() Event {
-	// TODO
+// Payload for occurrence found event.
+type OccurrenceFoundContext struct {
+	word, contextMarker string
+	offset              int
+}
 
-	return Event{OccurrenceFoundEvent, Rules{}}
+func NewOccurrenceFoundEvent(rules Rules, context OccurrenceFoundContext) Event {
+	return NewEvent(OccurrenceFoundEvent, rules, context)
+}
+
+func NewEvent(t EventType, rules Rules, payload interface{}) Event {
+	return Event{t, rules, payload}
 }

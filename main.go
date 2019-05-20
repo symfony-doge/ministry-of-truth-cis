@@ -39,29 +39,25 @@ func init() {
 
 	// Loading application configuration.
 	if err := config.Load(GinMode); nil != err {
-		log.Fatal(err)
+		log.Fatal("Unable to load config:", err)
 	}
 
 	// Setting up log files.
 	var logWriter, lwErr = applog.NewWriter()
 	if nil != lwErr {
-		log.Println(lwErr)
-		log.Fatal("Unable to init main log.")
+		log.Fatal("Unable to init main log:", lwErr)
 	}
 	gin.DefaultWriter = *logWriter
 
 	var errLogWriter, elwErr = applog.NewErrorWriter()
 	if nil != elwErr {
-		log.Println(elwErr)
-		log.Fatal("Unable to init error log.")
+		log.Fatal("Unable to init error log:", elwErr)
 	}
 	gin.DefaultErrorWriter = *errLogWriter
 
 	// Warming up rules index for matching word occurrences (index action).
-	var rulesIndex = rule.InvertedIndexInstance()
-	if riBuildErr := rulesIndex.Build(); nil != riBuildErr {
-		log.Println(riBuildErr)
-		log.Fatal("Unable to build rules index.")
+	if riBuildErr := rule.InvertedIndexInstance().Build(); nil != riBuildErr {
+		log.Fatal("Unable to build rules index:", riBuildErr)
 	}
 }
 
@@ -74,22 +70,9 @@ func configureRouter() *gin.Engine {
 	router.NoRoute(handler.Default().RouteNotFound())
 	router.NoMethod(handler.Default().MethodNotAllowed())
 
-	var rootRouterGroup *gin.RouterGroup = router.Group("")
-	{
-		var indexRouterGroup *gin.RouterGroup = rootRouterGroup.Group("/index")
-		{
-			indexRouterGroup.POST("", handler.Index().Index())
-		}
-
-		var tagRouterGroup *gin.RouterGroup = rootRouterGroup.Group("/tag")
-		{
-			var tagGroupRouterGroup *gin.RouterGroup = tagRouterGroup.Group("/groups")
-			{
-				tagGroupRouterGroup.GET("", handler.TagGroup().GetAll())
-				tagGroupRouterGroup.POST("", handler.TagGroup().GetAll())
-			}
-		}
-	}
+	router.GET("/tag/groups", handler.TagGroup().GetAll())
+	router.POST("/tag/groups", handler.TagGroup().GetAll())
+	router.POST("/index", handler.Index().Index())
 
 	return router
 }
