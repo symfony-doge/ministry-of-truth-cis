@@ -15,7 +15,7 @@ const (
 	// Buffer size for events channel.
 	// In ideal case we should not block workers during their communication
 	// with listener, but it depends on concrete task and how often they
-	// will communicate. This value is a medium.
+	// will communicate. This value is the medium.
 	notifyChannelBufferSize = 1 << 3
 )
 

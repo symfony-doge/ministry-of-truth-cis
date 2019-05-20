@@ -37,7 +37,7 @@ func (wp *DefaultWorkerPool) Distribute(
 	if err := wp.prepareWorkers(task, notifyChannel); nil != err {
 		wp.logger.Println(err)
 
-		return nil, err
+		return nil, WorkerNotPreparedError{task}
 	}
 
 	return wp.runWorkers()

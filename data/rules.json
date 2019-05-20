@@ -1,0 +1,24 @@
+[
+	{
+		"weight": 0.03,
+		"specification": [
+			{
+				"words": ["динамично", "динамичный"],
+				"conditions": [
+					{
+						"offsetLeftMax": -1
+					}
+				]
+			},
+			{
+				"words": ["развиваться", "развивающийся"],
+				"conditions": [
+					{
+						"offsetLeftMax": -1
+					}
+				]
+			},
+		],
+		"tags": ["young_dynamic"]
+	}
+]

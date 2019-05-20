@@ -29,7 +29,7 @@ type MatchTask struct {
 	// Some rules may check a specific context marker, to be applicable
 	// to the whole text, e.g. a word is expected to be in the job title only,
 	// then such rule becomes "matched".
-	sentencesByContextMarker map[string]Sentence
+	sentenceByContextMarker map[string]Sentence
 }
 
 // Adds a new text sentence under specific context with zero word offset.
@@ -37,7 +37,7 @@ func (t MatchTask) AddSentence(contextMarker string, text string) {
 	var words = strings.Fields(text)
 	var sentence = Sentence{0, words}
 
-	t.sentencesByContextMarker[contextMarker] = sentence
+	t.sentenceByContextMarker[contextMarker] = sentence
 }
 
 // Adds a new text sentence under specific context with specified word offset.
@@ -46,12 +46,12 @@ func (t MatchTask) addSentenceWithOffset(contextMarker string, text string, offs
 	var words = strings.Fields(text)
 	var sentence = Sentence{offset, words}
 
-	t.sentencesByContextMarker[contextMarker] = sentence
+	t.sentenceByContextMarker[contextMarker] = sentence
 }
 
 func NewMatchTask() MatchTask {
 	return MatchTask{
-		sentencesByContextMarker: make(map[string]Sentence),
+		sentenceByContextMarker: make(map[string]Sentence),
 	}
 }
 

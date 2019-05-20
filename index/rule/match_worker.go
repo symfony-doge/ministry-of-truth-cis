@@ -15,6 +15,9 @@ type MatchWorker struct {
 	context context.Context
 
 	channelsToNotify []chan<- Event
+
+	// Returns rules which are applicable for the given word.
+	occurrenceFinder *OccurrenceFinder
 }
 
 func (w *MatchWorker) SetContext(context context.Context) {
@@ -31,8 +34,13 @@ func (w *MatchWorker) Run() {
 		panic("context: match task context misuse.")
 	}
 
-	// TODO: do work.
-	_ = matchTask
+	for contextMarker, sentence := matchTask.sentenceByContextMarker {
+		for _, word := range sentence.words {
+			//if rules := w.occurrenceFinder.FindApplicableRules(word, contextMarker) {
+				// TODO	
+			//}
+		}
+	}
 
 	for _, notifyChannel := range w.channelsToNotify {
 		notifyChannel <- NewOccurrenceFoundEvent()
@@ -40,5 +48,7 @@ func (w *MatchWorker) Run() {
 }
 
 func NewMatchWorker() *MatchWorker {
-	return &MatchWorker{}
+	return &MatchWorker{
+		occurrenceFinder: InvertedOccurrenceFinderInstance(),
+	}
 }
