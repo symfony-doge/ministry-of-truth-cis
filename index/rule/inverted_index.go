@@ -21,8 +21,10 @@ var invertedIndexInstance *InvertedIndex
 
 var invertedIndexOnce sync.Once
 
+// Maps word to related rules.
 type rulesByWord map[string]Rules
 
+// Maps contextMarker to map[word]rules
 type wordsByContext map[string]rulesByWord
 
 // Represents a data structure in which words or separate letters are

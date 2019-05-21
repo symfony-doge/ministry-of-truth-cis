@@ -45,8 +45,8 @@ func (w *MatchWorker) Run() {
 			var context = OccurrenceFoundContext{word, contextMarker, wordOffset}
 			var occurrenceFoundEvent = NewOccurrenceFoundEvent(rules, context)
 
-			for _, notifyChannel := range w.channelsToNotify {
-				notifyChannel <- occurrenceFoundEvent
+			for ncIdx := range w.channelsToNotify {
+				w.channelsToNotify[ncIdx] <- occurrenceFoundEvent
 			}
 		}
 	}

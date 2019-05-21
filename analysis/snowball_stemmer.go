@@ -5,7 +5,6 @@
 package analysis
 
 import (
-	"strings"
 	"sync"
 
 	"github.com/kljensen/snowball/russian"
@@ -15,18 +14,13 @@ var snowballStemmerInstance *snowballStemmer
 
 var snowballStemmerOnce sync.Once
 
-// Performs text stemming.
+// Performs word stemming.
 type snowballStemmer struct{}
 
-func (l *snowballStemmer) Stem(input string) ([]string, error) {
-	var fields = strings.Fields(input)
-	var outputStemmed []string
+func (l *snowballStemmer) Stem(word string) (string, error) {
+	var wordStemmed = russian.Stem(word, true)
 
-	for idx := range fields {
-		outputStemmed = append(outputStemmed, russian.Stem(fields[idx], true))
-	}
-
-	return outputStemmed, nil
+	return wordStemmed, nil
 }
 
 func SnowballStemmerInstance() *snowballStemmer {

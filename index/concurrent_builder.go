@@ -7,16 +7,12 @@ package index
 import (
 	"log"
 
-	"github.com/symfony-doge/ministry-of-truth-cis/analysis"
 	"github.com/symfony-doge/ministry-of-truth-cis/index/rule"
 )
 
 // Uses parallel algorithms to build a sanity index.
 type ConcurrentBuilder struct {
 	logger *log.Logger
-
-	// Transforms all words in text to their initial form.
-	textStemmer analysis.Stemmer
 
 	// Returns all sanity rules applicable to the specified context.
 	ruleProcessor rule.Processor
@@ -26,14 +22,7 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 	var ruleMatchTask = rule.NewMatchTask()
 
 	for contextMarker, text := range context {
-		textStemmed, lErr := b.textStemmer.Stem(text)
-		if nil != lErr {
-			b.logger.Println(lErr)
-
-			panic("index: unable to stem a text.")
-		}
-
-		ruleMatchTask.AddSentence(contextMarker, textStemmed)
+		ruleMatchTask.AddSentence(contextMarker, text)
 	}
 
 	applicableRules, bErr := b.ruleProcessor.FindMatch(ruleMatchTask)
@@ -52,7 +41,6 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 func NewConcurrentBuilder() *ConcurrentBuilder {
 	return &ConcurrentBuilder{
 		logger:        DefaultLogger,
-		textStemmer:   analysis.SnowballStemmerInstance(),
 		ruleProcessor: rule.NewConcurrentProcessor(),
 	}
 }

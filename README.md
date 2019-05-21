@@ -33,7 +33,7 @@ $ go build -mod vendor -o build/app
 Ensure your app instance will work as expected:
 
 ```
-$ go test ./...
+$ go test ./... -test.bench . -benchmem
 ```
 
 ### API

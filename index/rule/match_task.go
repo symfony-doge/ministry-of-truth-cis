@@ -33,7 +33,8 @@ type MatchTask struct {
 }
 
 // Adds a new text sentence under specific context with zero word offset.
-func (t MatchTask) AddSentence(contextMarker string, words []string) {
+func (t MatchTask) AddSentence(contextMarker string, text string) {
+	var words = strings.Fields(text)
 	var sentence = Sentence{0, words}
 
 	t.sentenceByContextMarker[contextMarker] = sentence
@@ -41,9 +42,15 @@ func (t MatchTask) AddSentence(contextMarker string, words []string) {
 
 // Adds a new text sentence under specific context with specified word offset.
 // Practically used by splitters to divide a task into small derived parts.
-func (t MatchTask) addSentenceWithOffset(contextMarker string, text string, offset int) {
-	var words = strings.Fields(text)
+func (t MatchTask) addSentenceWithOffset(contextMarker string, words []string, offset int) {
 	var sentence = Sentence{offset, words}
+
+	t.sentenceByContextMarker[contextMarker] = sentence
+}
+
+func (t MatchTask) addWordsToSentence(contextMarker string, words []string) {
+	var sentence = t.sentenceByContextMarker[contextMarker]
+	sentence.words = append(sentence.words, words...)
 
 	t.sentenceByContextMarker[contextMarker] = sentence
 }
