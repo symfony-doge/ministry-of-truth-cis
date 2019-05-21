@@ -4,9 +4,8 @@
 
 package analysis
 
-// Stemmer is an interface for components that performs
-// semantical analysis of input word and returns a stem, e.g. for string
-// "динамичная" the result string will become "динамичн".
+// Stemmer is an interface for components that performs word stemming,
+// e.g. for string "динамичная" the result string will become "динамичн".
 type Stemmer interface {
 	Stem(string) (string, error)
 }
