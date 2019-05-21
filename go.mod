@@ -4,6 +4,7 @@ go 1.12
 
 require (
 	github.com/gin-gonic/gin v1.4.0
+	github.com/kljensen/snowball v0.6.0
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect

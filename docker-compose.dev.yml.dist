@@ -13,7 +13,6 @@ services:
                 DEPLOYMENT_PATH: ${DEPLOYMENT_PATH}
                 TIMEZONE: ${TIMEZONE}
                 GOLANG_VERSION: ${GOLANG_VERSION}
-                MYSTEM_VERSION: ${MYSTEM_VERSION}
         networks:
             back:
                 aliases:

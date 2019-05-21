@@ -6,7 +6,6 @@ package rule
 
 import (
 	"context"
-	"log"
 )
 
 // Performs rule matching routine against a part of text sentence

@@ -33,8 +33,7 @@ type MatchTask struct {
 }
 
 // Adds a new text sentence under specific context with zero word offset.
-func (t MatchTask) AddSentence(contextMarker string, text string) {
-	var words = strings.Fields(text)
+func (t MatchTask) AddSentence(contextMarker string, words []string) {
 	var sentence = Sentence{0, words}
 
 	t.sentenceByContextMarker[contextMarker] = sentence

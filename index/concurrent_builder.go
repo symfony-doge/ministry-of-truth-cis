@@ -16,7 +16,7 @@ type ConcurrentBuilder struct {
 	logger *log.Logger
 
 	// Transforms all words in text to their initial form.
-	textLemmatizer analysis.Lemmatizer
+	textStemmer analysis.Stemmer
 
 	// Returns all sanity rules applicable to the specified context.
 	ruleProcessor rule.Processor
@@ -26,14 +26,14 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 	var ruleMatchTask = rule.NewMatchTask()
 
 	for contextMarker, text := range context {
-		textLemmatized, lErr := b.textLemmatizer.Lemmatize(text)
+		textStemmed, lErr := b.textStemmer.Stem(text)
 		if nil != lErr {
 			b.logger.Println(lErr)
 
-			panic("index: unable to lemmatize a text.")
+			panic("index: unable to stem a text.")
 		}
 
-		ruleMatchTask.AddSentence(contextMarker, textLemmatized)
+		ruleMatchTask.AddSentence(contextMarker, textStemmed)
 	}
 
 	applicableRules, bErr := b.ruleProcessor.FindMatch(ruleMatchTask)
@@ -51,8 +51,8 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 
 func NewConcurrentBuilder() *ConcurrentBuilder {
 	return &ConcurrentBuilder{
-		logger:         DefaultLogger,
-		textLemmatizer: analysis.MyStemLemmatizerInstance(),
-		ruleProcessor:  rule.NewConcurrentProcessor(),
+		logger:        DefaultLogger,
+		textStemmer:   analysis.SnowballStemmerInstance(),
+		ruleProcessor: rule.NewConcurrentProcessor(),
 	}
 }
