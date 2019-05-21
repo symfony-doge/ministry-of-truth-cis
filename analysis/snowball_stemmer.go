@@ -20,6 +20,8 @@ type snowballStemmer struct{}
 func (l *snowballStemmer) Stem(word string) (string, error) {
 	var wordStemmed = russian.Stem(word, true)
 
+	// TODO: remove unwanted symbols, then fix test [0].
+
 	return wordStemmed, nil
 }
 
