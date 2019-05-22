@@ -36,27 +36,24 @@ type mtSplitContext struct {
 	contexts []context.Context
 }
 
-// Represents splitter for match task.
+// Represents a splitter for match tasks; divides a task to a set
+// of separate and independent tasks for parallel processing.
 type MatchTaskSplitter struct{}
 
 // Splits task into partsCount separate tasks.
 func (s *MatchTaskSplitter) Split(task MatchTask, partsCount int) ([]context.Context, error) {
-	// A single execution flow case.
+	// A single execution flow case, no splitting actually required.
 	if partsCount < 2 {
 		return []context.Context{NewMatchTaskContext(task)}, nil
 	}
 
-	var splitContext = mtSplitContext{}
-	splitContext.task = &task
-	splitContext.partSize = s.calculatePartSize(task, partsCount)
-	splitContext.upperBound = splitContext.partSize
-	splitContext.contexts = make([]context.Context, partsCount)
+	var splitContext *mtSplitContext = s.newSplitContext(task, partsCount)
 
 	for contextMarker := range task.sentenceByContextMarker {
 		splitContext.contextMarker = contextMarker
 
 		for {
-			if isEndOfContext := s.splitNext(&splitContext); isEndOfContext {
+			if isEndOfContext := s.splitNext(splitContext); isEndOfContext {
 				break
 			}
 		}
@@ -65,6 +62,19 @@ func (s *MatchTaskSplitter) Split(task MatchTask, partsCount int) ([]context.Con
 	return splitContext.contexts, nil
 }
 
+// Returns new context for task splitting operation.
+func (s *MatchTaskSplitter) newSplitContext(task MatchTask, partsCount int) *mtSplitContext {
+	var splitContext = &mtSplitContext{}
+
+	splitContext.task = &task
+	splitContext.partSize = s.calculatePartSize(task, partsCount)
+	splitContext.upperBound = splitContext.partSize
+	splitContext.contexts = make([]context.Context, partsCount)
+
+	return splitContext
+}
+
+// Returns words count for processing by a single worker.
 func (s *MatchTaskSplitter) calculatePartSize(task MatchTask, partsCount int) int {
 	var lenSum = 0
 
@@ -76,7 +86,6 @@ func (s *MatchTaskSplitter) calculatePartSize(task MatchTask, partsCount int) in
 	return lenSum / partsCount
 }
 
-// TODO refactoring is required.
 func (s *MatchTaskSplitter) splitNext(splitContext *mtSplitContext) (isEndOfContext bool) {
 	var sentence = splitContext.task.sentenceByContextMarker[splitContext.contextMarker]
 	var wordsCount = len(sentence.words)
@@ -87,30 +96,63 @@ func (s *MatchTaskSplitter) splitNext(splitContext *mtSplitContext) (isEndOfCont
 		isEndOfContext = true
 	}
 
-	{
-		var workerContext = splitContext.contexts[splitContext.currentContextIndex]
-		if nil == workerContext {
-			var partialTask = NewMatchTask()
-			partialTask.addSentenceWithOffset(splitContext.contextMarker, []string{}, splitContext.lowerBound)
-			splitContext.contexts[splitContext.currentContextIndex] = NewMatchTaskContext(partialTask)
-		}
-	}
-
-	var workerContext = splitContext.contexts[splitContext.currentContextIndex]
+	var workerContext context.Context = s.extractWorkerContext(splitContext)
 	partialTask, _ := MatchTaskFromContext(workerContext)
+
 	if isEndOfContext {
-		partialTask.addWordsToSentence(splitContext.contextMarker, sentence.words[splitContext.lowerBound:])
-		splitContext.contexts[splitContext.currentContextIndex] = NewMatchTaskContext(partialTask)
-		splitContext.lowerBound = 0
+		s.fill(splitContext, &partialTask, sentence.words)
 	} else {
-		partialTask.addWordsToSentence(splitContext.contextMarker, sentence.words[splitContext.lowerBound:splitContext.upperBound])
-		splitContext.contexts[splitContext.currentContextIndex] = NewMatchTaskContext(partialTask)
-		splitContext.lowerBound = splitContext.upperBound
-		splitContext.upperBound += splitContext.partSize
-		splitContext.currentContextIndex += 1
+		s.fillAndShift(splitContext, &partialTask, sentence.words)
 	}
 
 	return
+}
+
+func (s *MatchTaskSplitter) extractWorkerContext(splitContext *mtSplitContext) context.Context {
+	s.ensureWorkerContext(splitContext)
+
+	return splitContext.contexts[splitContext.currentContextIndex]
+}
+
+// Ensures worker context exists and is a valid instance within task splitting context.
+func (s *MatchTaskSplitter) ensureWorkerContext(splitContext *mtSplitContext) {
+	var workerContext = splitContext.contexts[splitContext.currentContextIndex]
+
+	if nil == workerContext {
+		// Empty partial task for filling.
+		var partialTask = NewMatchTask()
+		partialTask.addSentenceWithOffset(splitContext.contextMarker, []string{}, splitContext.lowerBound)
+
+		splitContext.contexts[splitContext.currentContextIndex] = NewMatchTaskContext(partialTask)
+	}
+}
+
+func (s *MatchTaskSplitter) fill(
+	splitContext *mtSplitContext,
+	partialTask *MatchTask,
+	words []string,
+) {
+	var partialWords = words[splitContext.lowerBound:]
+	partialTask.addWordsToSentence(splitContext.contextMarker, partialWords)
+
+	splitContext.contexts[splitContext.currentContextIndex] = NewMatchTaskContext(*partialTask)
+
+	splitContext.lowerBound = 0
+}
+
+func (s *MatchTaskSplitter) fillAndShift(
+	splitContext *mtSplitContext,
+	partialTask *MatchTask,
+	words []string,
+) {
+	var partialWords = words[splitContext.lowerBound:splitContext.upperBound]
+	partialTask.addWordsToSentence(splitContext.contextMarker, partialWords)
+
+	splitContext.contexts[splitContext.currentContextIndex] = NewMatchTaskContext(*partialTask)
+
+	splitContext.lowerBound = splitContext.upperBound
+	splitContext.upperBound += splitContext.partSize
+	splitContext.currentContextIndex += 1
 }
 
 func NewMatchTaskSplitter() *MatchTaskSplitter {

@@ -18,4 +18,4 @@ var/logs/app/*
 .env
 Dockerfile
 docker-compose.yml
-config/debug.yml
+config/*.yml

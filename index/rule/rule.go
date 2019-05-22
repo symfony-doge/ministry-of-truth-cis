@@ -26,7 +26,7 @@ type SpecificationEntry struct {
 	// One of the words will be enough for positive occurrence check result.
 	Words []string `json:"words"`
 
-	// One of the contexts is enough for positive occurrence check result.
+	// A set of context markers; one is enough for positive occurrence check result.
 	Contexts []string `json:"contexts"`
 
 	// Additional criteria for "merging" positive occurrence checks.

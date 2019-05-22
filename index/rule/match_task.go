@@ -10,7 +10,8 @@ import (
 )
 
 // Represent a sentence from text entry, used to divide a whole text into
-// small pieces (with presaved word order) suitable for concurrent processing.
+// small pieces (with presaved word order - offset from start) suitable
+// for concurrent processing.
 type Sentence struct {
 	// Offset in words from start of the text within a single context entry.
 	// e.g. for entry contextMarker->text {"description": "Test, description"}
@@ -24,8 +25,8 @@ type Sentence struct {
 
 // Describes a task for a rule processor (rules matching against a text).
 type MatchTask struct {
-	// Context represents prepared text sentences (see "analysis" package),
-	// aggregated by their semantical category or "marker" (e.g. job title; job description).
+	// Context represents text sentences, aggregated by their semantical
+	// category or "marker" (e.g. job title; job description).
 	// Some rules may check a specific context marker, to be applicable
 	// to the whole text, e.g. a word is expected to be in the job title only,
 	// then such rule becomes "matched".
@@ -41,13 +42,15 @@ func (t MatchTask) AddSentence(contextMarker string, text string) {
 }
 
 // Adds a new text sentence under specific context with specified word offset.
-// Practically used by splitters to divide a task into small derived parts.
+// Practically used by splitters to divide a task into small derived parts
+// with presaved positioning information (offsets from start of the original).
 func (t MatchTask) addSentenceWithOffset(contextMarker string, words []string, offset int) {
 	var sentence = Sentence{offset, words}
 
 	t.sentenceByContextMarker[contextMarker] = sentence
 }
 
+// Adds new words under specific context.
 func (t MatchTask) addWordsToSentence(contextMarker string, words []string) {
 	var sentence = t.sentenceByContextMarker[contextMarker]
 	sentence.words = append(sentence.words, words...)

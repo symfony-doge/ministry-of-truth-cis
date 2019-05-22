@@ -28,9 +28,9 @@ type InvertedOccurrenceFinder struct {
 }
 
 func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker string) (Rules, bool) {
-	wordStemmed, lErr := of.wordStemmer.Stem(word)
-	if nil != lErr {
-		of.logger.Println(lErr)
+	wordStemmed, stemmingErr := of.wordStemmer.Stem(word)
+	if nil != stemmingErr {
+		of.logger.Println(stemmingErr)
 
 		panic("index: unable to stem a text.")
 	}

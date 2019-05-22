@@ -57,7 +57,7 @@ func init() {
 
 	// Warming up rules index for matching word occurrences (index action).
 	if riBuildErr := rule.InvertedIndexInstance().Build(); nil != riBuildErr {
-		log.Fatal("Unable to build rules index:", riBuildErr)
+		log.Fatal("Unable to build rule index: ", riBuildErr)
 	}
 }
 
