@@ -12,7 +12,7 @@ import (
 
 const (
 	cptContextMarker = "description"
-	cptMatchString   = `Многие думают, что Lorem Ipsum - взятый с потолка псевдо-латинский динамичный развивающийся набор слов, 
+	cptMatchString   = `Многие думают, что Lorem Ipsum - взятый с потолка псевдо-латинский динамичный, развивающийся. набор слов, 
 	но это не совсем так. Его корни уходят в один фрагмент классической латыни 45 года н.э., то есть более двух тысячелетий назад. 
 	Ричард МакКлинток, профессор латыни из колледжа Hampden-Sydney, штат Вирджиния, взял одно из самых странных слов в Lorem Ipsum, 
 	consectetur, и занялся его поисками в классической латинской литературе. В результате он нашёл неоспоримый первоисточник Lorem Ipsum 
@@ -59,7 +59,9 @@ func BenchmarkConcurrentProcessorFindMatch(b *testing.B) {
 }
 
 // go test ./index/rule -bench FindMatch -benchmem -cpu 1
-// 2533261 ns/op    272496 B/op    23592 allocs/op
+// 1801229 ns/op    196356 B/op    16249 allocs/op
 
 // go test ./index/rule -bench FindMatch -benchmem -cpu 8
-//  516290 ns/op    282064 B/op    23684 allocs/op
+//  423094 ns/op    205692 B/op    16314 allocs/op
+
+// word purification before stemming (gain): ~ 100000 ns/op / 20%

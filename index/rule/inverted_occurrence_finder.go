@@ -20,6 +20,10 @@ var invertedOccurrenceFinderOnce sync.Once
 type InvertedOccurrenceFinder struct {
 	logger *log.Logger
 
+	// Removes unwanted symbols from word, which can interfere
+	// with stemmer's algorithm.
+	wordPurifier analysis.Purifier
+
 	// Transforms a word from text to its stem.
 	wordStemmer analysis.Stemmer
 
@@ -28,7 +32,9 @@ type InvertedOccurrenceFinder struct {
 }
 
 func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker string) (Rules, bool) {
-	wordStemmed, stemmingErr := of.wordStemmer.Stem(word)
+	var wordPurified = of.wordPurifier.Purify(word)
+
+	wordStemmed, stemmingErr := of.wordStemmer.Stem(wordPurified)
 	if nil != stemmingErr {
 		of.logger.Println(stemmingErr)
 
@@ -41,7 +47,8 @@ func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker stri
 func NewInvertedOccurrenceFinder() *InvertedOccurrenceFinder {
 	return &InvertedOccurrenceFinder{
 		logger:        DefaultLogger,
-		wordStemmer:   analysis.SnowballStemmerInstance(),
+		wordPurifier:  analysis.RussianPurifierInstance(),
+		wordStemmer:   analysis.RussianSnowballStemmerInstance(),
 		invertedIndex: InvertedIndexInstance(),
 	}
 }

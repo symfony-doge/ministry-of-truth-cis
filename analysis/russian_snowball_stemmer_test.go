@@ -16,8 +16,8 @@ const (
 )
 
 var (
-	sstSnowballStemmer *snowballStemmer = SnowballStemmerInstance()
-	sstResultsExpected                  = [...]string{
+	sstRussianSnowballStemmer *russianSnowballStemmer = RussianSnowballStemmerInstance()
+	sstResultsExpected                                = [...]string{
 		"молодая,",
 		"динамичн",
 		"развива",
@@ -25,28 +25,28 @@ var (
 	}
 )
 
-func TestStemmerStemSnowball(t *testing.T) {
+func TestStemmerStemRussianSnowball(t *testing.T) {
 	var testStrings = strings.Fields(sstTestString)
 
 	for idx := range testStrings {
-		var testResult, err = sstSnowballStemmer.Stem(testStrings[idx])
+		var testResult, err = sstRussianSnowballStemmer.Stem(testStrings[idx])
 
 		assert.NoError(t, err, "Expecting no error.")
 		assert.Equal(t, sstResultsExpected[idx], testResult, "Expecting a valid stem.")
 	}
 }
 
-func BenchmarkStemmerStemSnowball(b *testing.B) {
+func BenchmarkStemmerStemRussianSnowball(b *testing.B) {
 	var testStrings = strings.Fields(sstTestString)
 
 	b.ResetTimer()
 
 	for i := 1; i < b.N; i++ {
 		for idx := range testStrings {
-			sstSnowballStemmer.Stem(testStrings[idx])
+			sstRussianSnowballStemmer.Stem(testStrings[idx])
 		}
 	}
 }
 
-// $ go test ./analysis -bench StemSnowball -benchmem
+// $ go test ./analysis -bench StemRussianSnowball -benchmem
 // 21794 ns/op    4631 B/op    384 allocs/op

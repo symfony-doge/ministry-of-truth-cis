@@ -18,7 +18,7 @@ import (
 
 const (
 	// Minimum words required for task splitting.
-	minWordsForSplitThreshold = 20
+	minWordsForSplitThreshold = 100
 )
 
 type mtSplitContext struct {
