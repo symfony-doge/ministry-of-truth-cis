@@ -34,11 +34,11 @@ type ConcurrentProcessor struct {
 	workerPool WorkerPool
 
 	// Acquires events from workers.
-	listener EventListener
+	eventListener EventListener
 }
 
 func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
-	notifyChannel, lErr := p.listener.Listen(p.onRuleEvent)
+	notifyChannel, lErr := p.eventListener.Listen(p.onRuleEvent)
 	if nil != lErr {
 		p.logger.Println(lErr)
 
@@ -59,7 +59,7 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 	close(notifyChannel)
 
 	// TODO: return merged results, ensure all merged
-	// (may be check for listener session is required).
+	// (may be check for event listener session is required).
 
 	return Rules{}, nil
 }
@@ -74,8 +74,8 @@ func (p *ConcurrentProcessor) onRuleEvent(event Event) {
 
 func NewConcurrentProcessor() *ConcurrentProcessor {
 	return &ConcurrentProcessor{
-		logger:     DefaultLogger,
-		workerPool: NewDefaultWorkerPool(),
-		listener:   DefaultEventListenerInstance(),
+		logger:        DefaultLogger,
+		workerPool:    NewDefaultWorkerPool(),
+		eventListener: DefaultEventListenerInstance(),
 	}
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // Worker factory is responsible for worker instantiation.
-// It receives a task instance and should return a valid worker.
+// It receives a task instance and should return a valid worker for it.
 type WorkerFactory interface {
 	CreateFor(interface{}) (Worker, error)
 }

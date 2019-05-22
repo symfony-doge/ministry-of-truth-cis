@@ -48,15 +48,16 @@ func (wp *DefaultWorkerPool) prepareWorkers(
 	task interface{},
 	notifyChannel chan<- Event,
 ) error {
-	var workerCount int = runtime.GOMAXPROCS(0) - executionFlowsReserved
-	if workerCount < 1 {
-		workerCount = 1
+	var workerCount, resolvingErr = wp.resolveWorkerCount(task)
+	if nil != resolvingErr {
+		return resolvingErr
 	}
 
 	wp.workers = make([]Worker, workerCount)
-	var contexts, tsErr = wp.taskSplitter.Split(task, workerCount)
-	if nil != tsErr {
-		return tsErr
+
+	var contexts, splitErr = wp.taskSplitter.Split(task, workerCount)
+	if nil != splitErr {
+		return splitErr
 	}
 
 	for workerNumber := range wp.workers {
@@ -72,6 +73,29 @@ func (wp *DefaultWorkerPool) prepareWorkers(
 	}
 
 	return nil
+}
+
+func (wp *DefaultWorkerPool) resolveWorkerCount(task interface{}) (int, error) {
+	var workerCount int = runtime.GOMAXPROCS(0) - executionFlowsReserved
+
+	// There is no reason to gain a splitting and communication overhead,
+	// if only one execution flow is available.
+	if workerCount < 1 {
+		return 1, nil
+	}
+
+	// There is also can be a set of task-specific conditions,
+	// when it should be splitted and when not (e.g. small data amount).
+	var isTaskSplittable, checkErr = wp.taskSplitter.isSplittable(task)
+	if nil != checkErr {
+		return 0, checkErr
+	}
+
+	if !isTaskSplittable {
+		return 1, nil
+	}
+
+	return workerCount, nil
 }
 
 // Runs all prepared workers and returns a wait group to directly

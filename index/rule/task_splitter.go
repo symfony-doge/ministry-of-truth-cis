@@ -30,6 +30,17 @@ type TaskSplitter struct {
 	matchTaskSplitter *MatchTaskSplitter
 }
 
+// isSplittable returns positive if task can be divided into small subtasks.
+func (s *TaskSplitter) isSplittable(task interface{}) (bool, error) {
+	switch v := task.(type) {
+	case MatchTask:
+		return s.matchTaskSplitter.isSplittable(v)
+	default:
+		return false, UndefinedTaskSplitterError{task}
+	}
+}
+
+// Returns a set of subtasks created from a given task.
 func (s *TaskSplitter) Split(task interface{}, partsNum int) ([]context.Context, error) {
 	switch v := task.(type) {
 	case MatchTask:

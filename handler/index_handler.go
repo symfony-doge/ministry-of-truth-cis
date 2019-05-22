@@ -16,7 +16,7 @@ import (
 type indexRequest struct {
 	request.DefaultRequest
 
-	Context index.BuilderContext `json:"context"`
+	index.BuilderContext `json:"context"`
 }
 
 type indexResponse struct {
@@ -44,7 +44,7 @@ func (h *indexHandler) Index() gin.HandlerFunc {
 			return
 		}
 
-		var payload *index.Index = h.indexBuilder.Build(requestFromJson.Context)
+		var payload *index.Index = h.indexBuilder.Build(requestFromJson.BuilderContext)
 
 		context.JSON(
 			http.StatusOK,

@@ -2,12 +2,6 @@
 // Use of this source code is governed by a MIT license
 // that can be found in the LICENSE file.
 
-package rule
-
-import (
-	"context"
-)
-
 // 1) При дизайне структуры заранее учитывать разделение на подзадачи
 // (например, взять дерево, либо другую структуру, которую можно асинхронно
 // строить и контекстно-независимо обходить за 0(1) или O(log N).
@@ -15,6 +9,17 @@ import (
 // предварительно задизайненная под параллельные вычисления структура, см п.1
 // 3) Определить порог (объем данных), до которого запускать задачу в одном
 // потоке выполнения, иначе будет оверхед на коммуникацию.
+
+package rule
+
+import (
+	"context"
+)
+
+const (
+	// Minimum words required for task splitting.
+	minWordsForSplitThreshold = 20
+)
 
 type mtSplitContext struct {
 	// Task for splitting.
@@ -39,6 +44,10 @@ type mtSplitContext struct {
 // Represents a splitter for match tasks; divides a task to a set
 // of separate and independent tasks for parallel processing.
 type MatchTaskSplitter struct{}
+
+func (s *MatchTaskSplitter) isSplittable(task MatchTask) (bool, error) {
+	return task.Size() >= minWordsForSplitThreshold, nil
+}
 
 // Splits task into partsCount separate tasks.
 func (s *MatchTaskSplitter) Split(task MatchTask, partsCount int) ([]context.Context, error) {
@@ -76,14 +85,7 @@ func (s *MatchTaskSplitter) newSplitContext(task MatchTask, partsCount int) *mtS
 
 // Returns words count for processing by a single worker.
 func (s *MatchTaskSplitter) calculatePartSize(task MatchTask, partsCount int) int {
-	var lenSum = 0
-
-	// TODO: cache len in add sentence call(?)
-	for _, sentence := range task.sentenceByContextMarker {
-		lenSum += len(sentence.words)
-	}
-
-	return lenSum / partsCount
+	return task.Size() / partsCount
 }
 
 func (s *MatchTaskSplitter) splitNext(splitContext *mtSplitContext) (isEndOfContext bool) {

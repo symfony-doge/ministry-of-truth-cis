@@ -42,7 +42,8 @@ func (w *MatchWorker) Run() {
 				continue
 			}
 
-			var context = OccurrenceFoundContext{word, contextMarker, wordOffset}
+			var summaryOffset = sentence.offset + wordOffset
+			var context = OccurrenceFoundContext{word, contextMarker, summaryOffset}
 			var occurrenceFoundEvent = NewOccurrenceFoundEvent(rules, context)
 
 			for ncIdx := range w.channelsToNotify {

@@ -16,7 +16,7 @@ var DefaultLogger *log.Logger = log.New(os.Stdout, "[index] ", log.Ldate|log.Lti
 
 // Represents sanity index.
 type Index struct {
-	// Index value.
+	// Index value (0.0 - 100.0).
 	Value float64 `json:"value"`
 
 	// Related tags, with name of tag.Group as the aggregation key.

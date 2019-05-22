@@ -58,6 +58,17 @@ func (t MatchTask) addWordsToSentence(contextMarker string, words []string) {
 	t.sentenceByContextMarker[contextMarker] = sentence
 }
 
+// Returns summary count of words in all sentences.
+func (t MatchTask) Size() int {
+	var wordsSum = 0
+
+	for contextMarker := range t.sentenceByContextMarker {
+		wordsSum += len(t.sentenceByContextMarker[contextMarker].words)
+	}
+
+	return wordsSum
+}
+
 func NewMatchTask() MatchTask {
 	return MatchTask{
 		sentenceByContextMarker: make(map[string]Sentence),
