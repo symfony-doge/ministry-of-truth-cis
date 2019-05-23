@@ -47,6 +47,9 @@ type Rules []*Rule
 // 3. All merge conditions for matched words are met (e.g. some words should
 // not have any symbols between).
 type Rule struct {
+	// Rule name.
+	Name string `json:"name"`
+
 	// Rule "cost" for sanity index calculation algorithm.
 	Weight float64 `json:"weight"`
 

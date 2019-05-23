@@ -15,13 +15,12 @@ type CachedGroupProvider struct {
 	// Actual data provider if cache get is missed.
 	nested GroupProvider
 
-	// In-memory storage.
-	cached map[request.Locale]Groups
-
 	// For concurrent execution safety.
 	// Guarantees that only first cache set action will take effect
 	// to all goroutines where this instance is referenced.
 	mu sync.Mutex
+	// In-memory storage, protected by mu.
+	cached map[request.Locale]Groups
 }
 
 func (p *CachedGroupProvider) GetByLocale(locale request.Locale) Groups {

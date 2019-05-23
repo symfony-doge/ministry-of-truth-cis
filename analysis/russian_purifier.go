@@ -17,7 +17,7 @@ var russianPurifierOnce sync.Once
 // Performs word purification based on russian alphabet.
 type russianPurifier struct{}
 
-func (l *russianPurifier) Purify(word string) string {
+func (p *russianPurifier) Purify(word string) string {
 	var validRunes []rune
 
 	for _, r := range word {

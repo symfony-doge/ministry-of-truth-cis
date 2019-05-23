@@ -31,10 +31,10 @@ type Events []Event
 // and we need to modify index value according to the rule specification.
 type Event struct {
 	// The event type to decide receiver's business logic.
-	t EventType
+	Type EventType
 
 	// A set of rules that has been affected by the event.
-	rules Rules
+	Rules
 
 	// Additional data based on event type, e.g. OccurrenceFoundContext.
 	Payload interface{}

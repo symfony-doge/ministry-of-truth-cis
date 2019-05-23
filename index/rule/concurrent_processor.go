@@ -35,9 +35,13 @@ type ConcurrentProcessor struct {
 
 	// Acquires events from workers.
 	eventListener EventListener
+
+	// Performs merging of partial results from workers.
+	matchTaskResultMerger *MatchTaskResultMerger
 }
 
 func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
+	// TODO: listenerSession .Close()
 	notifyChannel, lErr := p.eventListener.Listen(p.onRuleEvent)
 	if nil != lErr {
 		p.logger.Println(lErr)
@@ -58,24 +62,35 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 	// Stops listening for new events after all workers is complete.
 	close(notifyChannel)
 
-	// TODO: return merged results, ensure all merged
-	// (may be check for event listener session is required).
-
-	return Rules{}, nil
+	return p.matchTaskResultMerger.GetResult(), nil
 }
 
 // Fires each time when a new rule event is available for processing.
 // It is a result collecting/merging function for separate task parts.
 func (p *ConcurrentProcessor) onRuleEvent(event Event) {
-	// TODO results merging
-
 	log.Printf("Event consumed by the processor: %v\n", event)
+
+	switch event.Type {
+	// Merging match task partial results.
+	case OccurrenceFoundEvent:
+		for ruleIdx := range event.Rules {
+			var context, isOccurrenceFoundContext = event.Payload.(OccurrenceFoundContext)
+			if !isOccurrenceFoundContext {
+				panic("rule: occurrence found event misuse.")
+			}
+
+			p.matchTaskResultMerger.Merge(event.Rules[ruleIdx], context)
+		}
+	default:
+		panic("rule: undefined event.")
+	}
 }
 
 func NewConcurrentProcessor() *ConcurrentProcessor {
 	return &ConcurrentProcessor{
-		logger:        DefaultLogger,
-		workerPool:    NewDefaultWorkerPool(),
-		eventListener: DefaultEventListenerInstance(),
+		logger:                DefaultLogger,
+		workerPool:            NewDefaultWorkerPool(),
+		eventListener:         DefaultEventListenerInstance(),
+		matchTaskResultMerger: NewMatchTaskResultMerger(),
 	}
 }

@@ -34,6 +34,8 @@ func (rw *TestResponseWriter) WriteHeader(statusCode int) {
 }
 
 func TestDefaultErrorDispatcher(t *testing.T) {
+	gin.SetMode(gin.ReleaseMode)
+
 	var rw = &TestResponseWriter{}
 	var context, _ = gin.CreateTestContext(rw)
 
