@@ -36,7 +36,7 @@ var (
 	cptConcurrentProcessor *ConcurrentProcessor = NewConcurrentProcessor()
 )
 
-func TestConcurrentProcessorFindMatch(t *testing.T) {
+func TestProcessorFindMatchConcurrent(t *testing.T) {
 	config.LoadFrom(gin.TestMode, []string{"../../config"})
 	InvertedIndexInstance().Build()
 
@@ -68,7 +68,7 @@ func cptPrepareExpectedRules(t *testing.T) Rules {
 	return cptRulesExpected
 }
 
-func BenchmarkConcurrentProcessorFindMatch(b *testing.B) {
+func BenchmarkProcessorFindMatchConcurrent(b *testing.B) {
 	var matchTask = NewMatchTask()
 	matchTask.AddSentence("description", cptMatchString)
 

@@ -10,11 +10,6 @@ import (
 	"github.com/symfony-doge/ministry-of-truth-cis/index/rule"
 )
 
-const (
-	// Total weight for calculation formula.
-	wacWeightTotal float64 = 1.0
-)
-
 var weightedAverageCalculatorI *weightedAverageCalculator
 
 var weightedAverageCalculatorOnce sync.Once
@@ -31,13 +26,14 @@ func (vc *weightedAverageCalculator) Calculate(rules rule.Rules) float64 {
 		return 99.9
 	}
 
-	var sum float64 = 0.0
+	var weightedGradeSum, weightTotal float64 = 0.0, 0.0
 
 	for ruleIdx := range rules {
-		sum += rules[ruleIdx].Grade * rules[ruleIdx].Weight
+		weightedGradeSum += rules[ruleIdx].Grade * rules[ruleIdx].Weight
+		weightTotal += rules[ruleIdx].Weight
 	}
 
-	var value = sum / wacWeightTotal
+	var value = weightedGradeSum / weightTotal
 
 	if value > 99.9 {
 		value = 99.9

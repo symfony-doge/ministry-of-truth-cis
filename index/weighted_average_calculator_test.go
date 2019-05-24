@@ -15,7 +15,7 @@ const (
 	wactIndexValueExpected = 95.5
 )
 
-func TestValueCalculatorWeightedAverageCalculate(t *testing.T) {
+func TestValueCalculatorCalculateWeightedAverage(t *testing.T) {
 	var calculator = weightedAverageCalculatorInstance()
 
 	var rules = wactLoadRules(t)
