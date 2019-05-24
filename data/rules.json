@@ -6,20 +6,16 @@
 			{
 				"words": ["динамичн"],
 				"contexts": ["description"],
-				"conditions": [
-					{
-						"offsetPreviousMax": -1
-					}
-				]
+				"conditions": {
+					"offsetPreviousMax": -1
+				}
 			},
 			{
 				"words": ["развива"],
 				"contexts": ["description"],
-				"conditions": [
-					{
-						"offsetPreviousMax": -1
-					}
-				]
+				"conditions": {
+					"offsetPreviousMax": -1
+				}
 			}
 		],
 		"tags": ["young_dynamic"]

@@ -12,9 +12,9 @@ import (
 // Package-level logger.
 var DefaultLogger *log.Logger = log.New(os.Stdout, "[rule] ", log.Ldate|log.Ltime|log.Lshortfile)
 
-// MergeCondition is a criteria for merging positive results of words
+// MergeConditions is a criteria for merging positive results of words
 // occurrence checks.
-type MergeCondition struct {
+type MergeConditions struct {
 	// 0..N value means maximum allowed offset between target word and previous word
 	// in specification for "merging" positive results of occurrence check.
 	// Negative value means no offset checks are required.
@@ -30,7 +30,7 @@ type SpecificationEntry struct {
 	Contexts []string `json:"contexts"`
 
 	// Additional criteria for "merging" positive occurrence checks.
-	MergeConditions []MergeCondition `json:"conditions"`
+	MergeConditions `json:"conditions"`
 }
 
 type Rules []*Rule

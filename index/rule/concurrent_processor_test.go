@@ -7,7 +7,9 @@ package rule
 import (
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/symfony-doge/ministry-of-truth-cis/config"
 )
 
 const (
@@ -35,6 +37,9 @@ var (
 )
 
 func TestConcurrentProcessorFindMatch(t *testing.T) {
+	config.LoadFrom(gin.TestMode, []string{"../../config"})
+	InvertedIndexInstance().Build()
+
 	var matchTask = NewMatchTask()
 	matchTask.AddSentence(cptContextMarker, cptMatchString)
 

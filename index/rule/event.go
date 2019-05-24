@@ -42,7 +42,7 @@ type Event struct {
 
 // Payload for occurrence found event.
 type OccurrenceFoundContext struct {
-	word, contextMarker string
+	word, wordProcessed string
 	offset              int
 }
 

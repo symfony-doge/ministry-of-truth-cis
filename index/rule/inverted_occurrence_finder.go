@@ -31,7 +31,7 @@ type InvertedOccurrenceFinder struct {
 	invertedIndex *InvertedIndex
 }
 
-func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker string) (Rules, bool) {
+func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker string) (Rules, bool, string) {
 	var wordPurified = of.wordPurifier.Purify(word)
 
 	wordStemmed, stemmingErr := of.wordStemmer.Stem(wordPurified)
@@ -41,7 +41,9 @@ func (of *InvertedOccurrenceFinder) FindApplicableRules(word, contextMarker stri
 		panic("index: unable to stem a text.")
 	}
 
-	return of.invertedIndex.Lookup(wordStemmed, contextMarker)
+	var rules, isMatch = of.invertedIndex.Lookup(wordStemmed, contextMarker)
+
+	return rules, isMatch, wordStemmed
 }
 
 func NewInvertedOccurrenceFinder() *InvertedOccurrenceFinder {

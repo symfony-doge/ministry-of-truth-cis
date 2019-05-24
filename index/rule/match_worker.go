@@ -35,20 +35,24 @@ func (w *MatchWorker) Run() {
 	}
 
 	for contextMarker, sentence := range matchTask.sentenceByContextMarker {
-		for wordOffset, word := range sentence.words {
-			rules, isOccurrenceFound := w.occurrenceFinder.FindApplicableRules(word, contextMarker)
+		w.checkWordOccurrence(contextMarker, sentence)
+	}
+}
 
-			if !isOccurrenceFound {
-				continue
-			}
+func (w *MatchWorker) checkWordOccurrence(contextMarker string, sentence Sentence) {
+	for wordOffset, word := range sentence.words {
+		rules, isOccurrenceFound, wp := w.occurrenceFinder.FindApplicableRules(word, contextMarker)
 
-			var summaryOffset = sentence.offset + wordOffset
-			var context = OccurrenceFoundContext{word, contextMarker, summaryOffset}
-			var occurrenceFoundEvent = NewOccurrenceFoundEvent(rules, context)
+		if !isOccurrenceFound {
+			continue
+		}
 
-			for ncIdx := range w.channelsToNotify {
-				w.channelsToNotify[ncIdx] <- occurrenceFoundEvent
-			}
+		var summaryOffset = sentence.offset + wordOffset
+		var context = OccurrenceFoundContext{word, wp, summaryOffset}
+		var occurrenceFoundEvent = NewOccurrenceFoundEvent(rules, context)
+
+		for ncIdx := range w.channelsToNotify {
+			w.channelsToNotify[ncIdx] <- occurrenceFoundEvent
 		}
 	}
 }

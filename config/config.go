@@ -34,11 +34,20 @@ func init() {
 
 // Loads configuration according to specified Gin mode.
 func Load(mode string) error {
+	return LoadFrom(mode, []string{"config"})
+}
+
+func LoadFrom(mode string, configPaths []string) error {
 	config = viper.New()
 
-	config.AddConfigPath("config")
+	for cpIdx := range configPaths {
+		config.AddConfigPath(configPaths[cpIdx])
+	}
+
 	config.SetConfigName(mode)
 	config.SetConfigType("yaml")
+
+	config.AutomaticEnv()
 
 	if err := config.ReadInConfig(); nil != err {
 		log.Println(err)
