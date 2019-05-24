@@ -49,7 +49,7 @@ func (i *InvertedIndex) Lookup(word, contextMarker string) (Rules, bool) {
 }
 
 func (i *InvertedIndex) Build() error {
-	rules, loadErr := i.ruleProvider.getRules()
+	rules, loadErr := i.ruleProvider.GetRules()
 	if nil != loadErr {
 		return loadErr
 	}

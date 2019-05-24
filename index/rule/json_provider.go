@@ -24,11 +24,15 @@ var jsonProviderOnce sync.Once
 // Loads rules from json file.
 type JSONProvider struct{}
 
-func (l *JSONProvider) getRules() (Rules, error) {
+func (l *JSONProvider) GetRules() (Rules, error) {
 	var c = config.Instance()
-	var filename = c.GetString(configPathRulesJson)
+	var filepath = c.GetString(configPathRulesJson)
 
-	var buf, readErr = ioutil.ReadFile(filename)
+	return l.GetRulesFrom(filepath)
+}
+
+func (l *JSONProvider) GetRulesFrom(filepath string) (Rules, error) {
+	var buf, readErr = ioutil.ReadFile(filepath)
 	if nil != readErr {
 		return nil, readErr
 	}

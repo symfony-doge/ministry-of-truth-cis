@@ -41,8 +41,6 @@ type ConcurrentProcessor struct {
 }
 
 func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
-	p.matchTaskResultMerger = NewMatchTaskResultMerger()
-
 	listenerSession, listenErr := p.eventListener.Listen(p.onRuleEvent)
 	if nil != listenErr {
 		p.logger.Println(listenErr)
@@ -94,6 +92,6 @@ func NewConcurrentProcessor() *ConcurrentProcessor {
 		logger:                DefaultLogger,
 		workerPool:            NewDefaultWorkerPool(),
 		eventListener:         DefaultEventListenerInstance(),
-		matchTaskResultMerger: nil,
+		matchTaskResultMerger: NewMatchTaskResultMerger(),
 	}
 }

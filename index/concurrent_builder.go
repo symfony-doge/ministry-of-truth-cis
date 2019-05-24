@@ -14,9 +14,6 @@ import (
 type ConcurrentBuilder struct {
 	logger *log.Logger
 
-	// Returns all sanity rules applicable to the specified context.
-	ruleProcessor rule.Processor
-
 	// Returns a sanity index value by applicable rules.
 	valueCalculator
 }
@@ -28,7 +25,10 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 		ruleMatchTask.AddSentence(contextMarker, text)
 	}
 
-	applicableRules, matchingErr := b.ruleProcessor.FindMatch(ruleMatchTask)
+	// Returns all sanity rules applicable to the specified context.
+	var ruleProcessor rule.Processor = rule.NewConcurrentProcessor()
+
+	applicableRules, matchingErr := ruleProcessor.FindMatch(ruleMatchTask)
 	if nil != matchingErr {
 		b.logger.Println(matchingErr)
 
@@ -45,7 +45,6 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 func NewConcurrentBuilder() *ConcurrentBuilder {
 	return &ConcurrentBuilder{
 		logger:          DefaultLogger,
-		ruleProcessor:   rule.NewConcurrentProcessor(),
 		valueCalculator: weightedAverageCalculatorInstance(),
 	}
 }

@@ -53,7 +53,7 @@ func TestConcurrentProcessorFindMatch(t *testing.T) {
 
 func cptPrepareExpectedRules(t *testing.T) Rules {
 	var ruleProvider = JSONProviderInstance()
-	var allRules, rulesLoadErr = ruleProvider.getRules()
+	var allRules, rulesLoadErr = ruleProvider.GetRules()
 	if nil != rulesLoadErr {
 		t.Fatal("Unable to load rules:", rulesLoadErr)
 	}
