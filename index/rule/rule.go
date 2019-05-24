@@ -51,11 +51,14 @@ type Rule struct {
 	Name string `json:"name"`
 
 	// Rule "cost" for sanity index calculation algorithm.
+	Grade float64 `json:"grade"`
+
+	// Rule "weight" for sanity index calculation algorithm.
 	Weight float64 `json:"weight"`
 
 	// Rule specification is a set of configuration entries that describes
 	// cases when this rule is applicable to the text sentence.
 	Specification []SpecificationEntry `json:"specification"`
 
-	TagNames []string `json:"tags"`
+	TagIdentifiers []string `json:"tags"`
 }

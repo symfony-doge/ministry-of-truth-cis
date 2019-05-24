@@ -16,6 +16,9 @@ type ConcurrentBuilder struct {
 
 	// Returns all sanity rules applicable to the specified context.
 	ruleProcessor rule.Processor
+
+	// Returns a sanity index value by applicable rules.
+	valueCalculator
 }
 
 func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
@@ -25,22 +28,24 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 		ruleMatchTask.AddSentence(contextMarker, text)
 	}
 
-	applicableRules, bErr := b.ruleProcessor.FindMatch(ruleMatchTask)
-	if nil != bErr {
-		b.logger.Println(bErr)
+	applicableRules, matchingErr := b.ruleProcessor.FindMatch(ruleMatchTask)
+	if nil != matchingErr {
+		b.logger.Println(matchingErr)
 
-		panic("index: unable to find applicable rules for text.")
+		panic("index: unable to find applicable rules for the text.")
 	}
 
-	// TODO: index calculation by rules specifications.
-	_ = applicableRules
+	var sanityIndex *Index = newIndex()
 
-	return NewIndex()
+	sanityIndex.Value = b.valueCalculator.Calculate(applicableRules)
+
+	return sanityIndex
 }
 
 func NewConcurrentBuilder() *ConcurrentBuilder {
 	return &ConcurrentBuilder{
-		logger:        DefaultLogger,
-		ruleProcessor: rule.NewConcurrentProcessor(),
+		logger:          DefaultLogger,
+		ruleProcessor:   rule.NewConcurrentProcessor(),
+		valueCalculator: weightedAverageCalculatorInstance(),
 	}
 }

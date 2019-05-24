@@ -23,9 +23,7 @@ type Index struct {
 	Tags map[string]tag.Tags `json:"tags"`
 }
 
-// TODO: setters.
-
-func NewIndex() *Index {
+func newIndex() *Index {
 	return &Index{
 		Value: 0.0,
 		Tags:  make(map[string]tag.Tags),
