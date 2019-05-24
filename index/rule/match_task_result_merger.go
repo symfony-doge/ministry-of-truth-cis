@@ -8,7 +8,8 @@ import (
 	"math"
 )
 
-// NOTE: Current version doesn't support same words under multiple context markers.
+// NOTE: Current implementation doesn't support same words under multiple context markers (todo).
+// NOTE: Offset condition is unstable; word dublicates is not supported yet (todo).
 
 // Represents a partial result of task execution.
 type matchTaskResult struct {
@@ -47,9 +48,12 @@ func (m *MatchTaskResultMerger) Merge(rule *Rule, context OccurrenceFoundContext
 		return
 	}
 
-	// We don't need to process the same word twice if such occurs.
-	if _, isContextForWordExists := result.eventContextByWord[context.wordProcessed]; isContextForWordExists {
-		return
+	// We don't need to process the same word twice.
+	if c, isContextForWordExists := result.eventContextByWord[context.wordProcessed]; isContextForWordExists {
+		// Unless an occurrence case with lower position will found.
+		if c.offset < context.offset {
+			return
+		}
 	}
 
 	result.eventContextByWord[context.wordProcessed] = context

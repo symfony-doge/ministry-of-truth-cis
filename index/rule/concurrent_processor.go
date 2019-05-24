@@ -59,10 +59,13 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 	// Waiting while workers do their parts of task.
 	workersWaitGroup.Wait()
 
-	// Stops listening for new events after all workers is complete.
+	// Stops listening for new events after all workers is complete; waits
+	// for remain events to be properly processed.
 	listenerSession.Close()
 
-	return p.matchTaskResultMerger.GetResult(), nil
+	var rules = p.matchTaskResultMerger.GetResult()
+
+	return rules, nil
 }
 
 // Fires each time when a new rule event is available for processing.
