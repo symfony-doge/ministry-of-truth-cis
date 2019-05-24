@@ -5,16 +5,7 @@
 package rule
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"sync"
-
-	"github.com/symfony-doge/ministry-of-truth-cis/config"
-)
-
-const (
-	// Path to json file with rules.
-	configPathRulesJson string = "data.rule.json"
 )
 
 var invertedIndexInstance *InvertedIndex
@@ -39,6 +30,8 @@ type wordsByContext map[string]rulesByWord
 //     }
 // }
 type InvertedIndex struct {
+	ruleProvider *JSONProvider
+
 	wordsByContext
 }
 
@@ -56,7 +49,7 @@ func (i *InvertedIndex) Lookup(word, contextMarker string) (Rules, bool) {
 }
 
 func (i *InvertedIndex) Build() error {
-	rules, loadErr := i.loadRules()
+	rules, loadErr := i.ruleProvider.getRules()
 	if nil != loadErr {
 		return loadErr
 	}
@@ -66,23 +59,6 @@ func (i *InvertedIndex) Build() error {
 	}
 
 	return nil
-}
-
-func (i *InvertedIndex) loadRules() (Rules, error) {
-	var c = config.Instance()
-	var filename = c.GetString(configPathRulesJson)
-
-	var buf, readErr = ioutil.ReadFile(filename)
-	if nil != readErr {
-		return nil, readErr
-	}
-
-	var rules Rules
-	if unmarshalErr := json.Unmarshal(buf, &rules); nil != unmarshalErr {
-		return nil, unmarshalErr
-	}
-
-	return rules, nil
 }
 
 func (i *InvertedIndex) addToIndex(rule *Rule) {
@@ -130,7 +106,10 @@ func (i *InvertedIndex) mergeRulesByWord(to rulesByWord, from rulesByWord) {
 }
 
 func NewInvertedIndex() *InvertedIndex {
-	return &InvertedIndex{make(wordsByContext)}
+	return &InvertedIndex{
+		ruleProvider:   JSONProviderInstance(),
+		wordsByContext: make(wordsByContext),
+	}
 }
 
 func InvertedIndexInstance() *InvertedIndex {

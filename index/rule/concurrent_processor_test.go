@@ -45,11 +45,27 @@ func TestConcurrentProcessorFindMatch(t *testing.T) {
 
 	rules, err := cptConcurrentProcessor.FindMatch(matchTask)
 
-	// TODO: load expected rules.
-	var cptRulesExpected = Rules{}
+	var cptRulesExpected = cptPrepareExpectedRules(t)
 
 	assert.NoError(t, err, "Expecting no errors.")
 	assert.Equal(t, cptRulesExpected, rules, "Expecting rules are match.")
+}
+
+func cptPrepareExpectedRules(t *testing.T) Rules {
+	var ruleProvider = JSONProviderInstance()
+	var allRules, rulesLoadErr = ruleProvider.getRules()
+	if nil != rulesLoadErr {
+		t.Fatal("Unable to load rules:", rulesLoadErr)
+	}
+
+	var cptRulesExpected Rules
+	for ruleIdx := range allRules {
+		if allRules[ruleIdx].Name == "young_dynamic" {
+			cptRulesExpected = append(cptRulesExpected, allRules[ruleIdx])
+		}
+	}
+
+	return cptRulesExpected
 }
 
 func BenchmarkConcurrentProcessorFindMatch(b *testing.B) {
@@ -67,6 +83,6 @@ func BenchmarkConcurrentProcessorFindMatch(b *testing.B) {
 // 1801229 ns/op    196356 B/op    16249 allocs/op
 
 // go test ./index/rule -bench FindMatch -benchmem -cpu 8
-//  423094 ns/op    205692 B/op    16314 allocs/op
+//  464349 ns/op    205932 B/op    16319 allocs/op
 
 // word purification before stemming (gain): ~ 100000 ns/op / 20%

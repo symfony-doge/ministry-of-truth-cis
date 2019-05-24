@@ -68,8 +68,6 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 // Fires each time when a new rule event is available for processing.
 // It is a result collecting/merging function for separate task parts.
 func (p *ConcurrentProcessor) onRuleEvent(event Event) {
-	log.Printf("Event consumed by the processor: %v\n", event)
-
 	switch event.Type {
 	// Merging match task partial results.
 	case OccurrenceFoundEvent:
