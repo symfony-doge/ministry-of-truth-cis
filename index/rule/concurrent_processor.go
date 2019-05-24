@@ -41,14 +41,14 @@ type ConcurrentProcessor struct {
 }
 
 func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
-	// TODO: listenerSession .Close()
-	notifyChannel, lErr := p.eventListener.Listen(p.onRuleEvent)
-	if nil != lErr {
-		p.logger.Println(lErr)
+	listenerSession, listenErr := p.eventListener.Listen(p.onRuleEvent)
+	if nil != listenErr {
+		p.logger.Println(listenErr)
 
 		return nil, EventListenerNotStartedError{}
 	}
 
+	var notifyChannel = listenerSession.NotifyChannel()
 	var workersWaitGroup, wpErr = p.workerPool.Distribute(task, notifyChannel)
 	if nil != wpErr {
 		p.logger.Println(wpErr)
@@ -60,7 +60,7 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 	workersWaitGroup.Wait()
 
 	// Stops listening for new events after all workers is complete.
-	close(notifyChannel)
+	listenerSession.Close()
 
 	return p.matchTaskResultMerger.GetResult(), nil
 }

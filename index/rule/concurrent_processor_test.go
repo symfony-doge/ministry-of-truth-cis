@@ -80,9 +80,9 @@ func BenchmarkConcurrentProcessorFindMatch(b *testing.B) {
 }
 
 // go test ./index/rule -bench FindMatch -benchmem -cpu 1
-// 1801229 ns/op    196356 B/op    16249 allocs/op
+// 930430 ns/op    196813 B/op    16263 allocs/op
 
 // go test ./index/rule -bench FindMatch -benchmem -cpu 8
-//  464349 ns/op    205932 B/op    16319 allocs/op
+// 420586 ns/op    206043 B/op    16320 allocs/op
 
 // word purification before stemming (gain): ~ 100000 ns/op / 20%

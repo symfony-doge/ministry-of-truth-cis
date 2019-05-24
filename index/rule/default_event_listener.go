@@ -27,15 +27,17 @@ var defaultEventListenerOnce sync.Once
 // multiple listening sessions.
 type DefaultEventListener struct {
 	// Listening history.
-	history []*EventListenerSession
+	history []*eventListenerSession
 }
 
-// Starts new listening session and returns a channel to which
+// Starts and returns new listening session with notification channel to which
 // senders should push their events; stops listening when the notify channel
 // becomes closed.
-func (l *DefaultEventListener) Listen(fn ConsumeFunc) (chan<- Event, error) {
+func (l *DefaultEventListener) Listen(fn ConsumeFunc) (ROEventListenerSession, error) {
 	var notifyChannel = make(chan Event, notifyChannelBufferSize)
-	var listenerSession = NewEventListenerSession()
+	var listenerSession = newEventListenerSession()
+
+	defer l.rotateHistory(listenerSession)
 
 	go func() {
 		for {
@@ -47,7 +49,7 @@ func (l *DefaultEventListener) Listen(fn ConsumeFunc) (chan<- Event, error) {
 					// We should set channel to nil, to ensure it will not block
 					// a goroutine with infinity communication loop
 					// (closed channels blocks immediately).
-					listenerSession.done, notifyChannel = true, nil
+					notifyChannel = nil
 
 					break
 				}
@@ -57,7 +59,7 @@ func (l *DefaultEventListener) Listen(fn ConsumeFunc) (chan<- Event, error) {
 			// to process ones which already received (non-blocking approach).
 			default:
 				// We still have to process events until each will be
-				// "consumed", then we can check session state, but notify
+				// "consumed", then we can change session state, but notify
 				// channel is safe to be closed earlier.
 				if listenerSession.consumed < len(listenerSession.received) {
 					var next Event = listenerSession.received[listenerSession.consumed]
@@ -68,21 +70,23 @@ func (l *DefaultEventListener) Listen(fn ConsumeFunc) (chan<- Event, error) {
 					break
 				}
 
-				if listenerSession.done {
+				if nil == notifyChannel {
+					listenerSession.done <- true
+
 					return
 				}
 			}
 		}
 	}()
 
-	l.rotateHistory(listenerSession)
+	var readOnlyListenerSession = newROEventListenerSession(listenerSession, notifyChannel)
 
-	return notifyChannel, nil
+	return readOnlyListenerSession, nil
 }
 
-func (l *DefaultEventListener) rotateHistory(els *EventListenerSession) {
+func (l *DefaultEventListener) rotateHistory(els *eventListenerSession) {
 	if len(l.history) >= maxHistoryEntries {
-		l.history = make([]*EventListenerSession, maxHistoryEntries)
+		l.history = make([]*eventListenerSession, maxHistoryEntries)
 	}
 
 	l.history = append(l.history, els)
