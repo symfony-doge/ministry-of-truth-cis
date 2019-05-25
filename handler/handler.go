@@ -51,7 +51,6 @@ func TagGroup() *tagGroupHandler {
 
 	// Group provider.
 	var jsonGroupProvider = tag.NewJSONGroupProvider()
-	jsonGroupProvider.SetLogger(tag.DefaultLogger)
 
 	var cachedGroupProvider = tag.NewCachedGroupProvider()
 	cachedGroupProvider.SetNested(jsonGroupProvider)

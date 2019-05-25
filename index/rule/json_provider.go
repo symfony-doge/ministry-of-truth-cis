@@ -5,11 +5,10 @@
 package rule
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"sync"
 
 	"github.com/symfony-doge/ministry-of-truth-cis/config"
+	"github.com/symfony-doge/ministry-of-truth-cis/datautil"
 )
 
 const (
@@ -22,31 +21,30 @@ var jsonProviderInstance *JSONProvider
 var jsonProviderOnce sync.Once
 
 // Loads rules from json file.
-type JSONProvider struct{}
+type JSONProvider struct {
+	loader *datautil.Loader
+}
 
-func (l *JSONProvider) GetRules() (Rules, error) {
+func (p *JSONProvider) GetRules() (Rules, error) {
 	var c = config.Instance()
 	var filepath = c.GetString(configPathRulesJson)
 
-	return l.GetRulesFrom(filepath)
+	return p.GetRulesFrom(filepath)
 }
 
-func (l *JSONProvider) GetRulesFrom(filepath string) (Rules, error) {
-	var buf, readErr = ioutil.ReadFile(filepath)
-	if nil != readErr {
-		return nil, readErr
-	}
-
+func (p *JSONProvider) GetRulesFrom(filepath string) (Rules, error) {
 	var rules Rules
-	if unmarshalErr := json.Unmarshal(buf, &rules); nil != unmarshalErr {
-		return nil, unmarshalErr
+	if loadErr := p.loader.LoadJSON("JSONProvider.GetRulesFrom", filepath, &rules); nil != loadErr {
+		return rules, loadErr
 	}
 
 	return rules, nil
 }
 
 func NewJSONProvider() *JSONProvider {
-	return &JSONProvider{}
+	return &JSONProvider{
+		loader: datautil.LoaderInstance(),
+	}
 }
 
 func JSONProviderInstance() *JSONProvider {

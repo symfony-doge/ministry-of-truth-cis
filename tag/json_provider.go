@@ -14,36 +14,36 @@ import (
 )
 
 const (
-	// Path to json file with tag groups.
-	configPathDataJson string = "data.tag.group.json"
+	// Path to json file with tags.
+	configPathTagsDataJson string = "data.tag.json"
 )
 
-// Provides tag groups by a json file.
-type JSONGroupProvider struct {
+// Provides tags by a json file.
+type JSONProvider struct {
 	logger *log.Logger
 
 	loader *datautil.Loader
 }
 
-// Returns tag groups from a json file.
-func (p *JSONGroupProvider) GetByLocale(locale request.Locale) Groups {
+// Returns tags from a json file.
+func (p *JSONProvider) GetTags(locale request.Locale) Tags {
 	var c = config.Instance()
 
-	var filenameFormat = c.GetString(configPathDataJson)
+	var filenameFormat = c.GetString(configPathTagsDataJson)
 	var filename = fmt.Sprintf(filenameFormat, locale)
 
-	var tagGroups Groups
-	if loadErr := p.loader.LoadJSON("JSONGroupProvider.GetByLocale", filename, &tagGroups); nil != loadErr {
+	var tags Tags
+	if loadErr := p.loader.LoadJSON("JSONProvider.GetTags", filename, &tags); nil != loadErr {
 		p.logger.Println(loadErr)
 
-		panic("tag: unable to retrieve tag groups.")
+		panic("tag: unable to retrieve tags.")
 	}
 
-	return tagGroups
+	return tags
 }
 
-func NewJSONGroupProvider() *JSONGroupProvider {
-	return &JSONGroupProvider{
+func NewJSONProvider() *JSONProvider {
+	return &JSONProvider{
 		logger: DefaultLogger,
 		loader: datautil.LoaderInstance(),
 	}
