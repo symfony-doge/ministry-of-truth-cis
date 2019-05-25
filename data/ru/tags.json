@@ -4,6 +4,7 @@
 		"title": "Динамично развивающаяся компания",
 		"description": "Молодая, динамично развивающаяся компания возьмет в аренду степлер.",
 		"color": "#8db7ad",
-		"image_url": "https://cdn.veslo.it/current/images/tags/young_dynamic.jpg"
+		"image_url": "https://cdn.veslo.it/current/images/tags/young_dynamic.jpg",
+		"group": "soft"
 	}
 ]

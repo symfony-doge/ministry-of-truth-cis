@@ -4,10 +4,14 @@
 
 package index
 
+import (
+	"github.com/symfony-doge/ministry-of-truth-cis/request"
+)
+
 type BuilderContext map[string]string
 
 // Builds sanity index for specified context
 // according to predefined rules set (see "rule" package).
 type Builder interface {
-	Build(BuilderContext) *Index
+	Build(BuilderContext, request.Locale) *Index
 }

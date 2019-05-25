@@ -44,7 +44,10 @@ func (h *indexHandler) Index() gin.HandlerFunc {
 			return
 		}
 
-		var payload *index.Index = h.indexBuilder.Build(requestFromJson.BuilderContext)
+		var payload *index.Index = h.indexBuilder.Build(
+			requestFromJson.BuilderContext,
+			requestFromJson.Locale,
+		)
 
 		context.JSON(
 			http.StatusOK,

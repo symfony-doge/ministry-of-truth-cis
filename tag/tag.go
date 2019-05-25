@@ -21,4 +21,5 @@ type Tag struct {
 	Description string `json:"description"`
 	Color       string `json:"color"`
 	ImageUrl    string `json:"image_url"`
+	GroupName   string `json:"group"`
 }

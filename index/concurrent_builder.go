@@ -8,6 +8,8 @@ import (
 	"log"
 
 	"github.com/symfony-doge/ministry-of-truth-cis/index/rule"
+	"github.com/symfony-doge/ministry-of-truth-cis/request"
+	"github.com/symfony-doge/ministry-of-truth-cis/tag"
 )
 
 // Uses parallel algorithms to build a sanity index.
@@ -16,9 +18,12 @@ type ConcurrentBuilder struct {
 
 	// Returns a sanity index value by applicable rules.
 	valueCalculator
+
+	// Performs tags aggregation by group names.
+	tagAggregator *tag.Aggregator
 }
 
-func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
+func (b *ConcurrentBuilder) Build(context BuilderContext, locale request.Locale) *Index {
 	var ruleMatchTask = rule.NewMatchTask()
 
 	for contextMarker, text := range context {
@@ -39,6 +44,9 @@ func (b *ConcurrentBuilder) Build(context BuilderContext) *Index {
 
 	sanityIndex.Value = b.valueCalculator.Calculate(applicableRules)
 
+	var tagNames = b.tagAggregator.ExtractTagNames(applicableRules)
+	sanityIndex.Tags = b.tagAggregator.AggregateByGroup(tagNames, locale)
+
 	return sanityIndex
 }
 
@@ -46,5 +54,6 @@ func NewConcurrentBuilder() *ConcurrentBuilder {
 	return &ConcurrentBuilder{
 		logger:          DefaultLogger,
 		valueCalculator: weightedAverageCalculatorInstance(),
+		tagAggregator:   tag.AggregatorInstance(),
 	}
 }
