@@ -16,7 +16,7 @@ import (
 type indexRequest struct {
 	request.DefaultRequest
 
-	index.BuilderContext `json:"context"`
+	index.BuilderContext `json:"context" binding:"required"`
 }
 
 type indexResponse struct {
