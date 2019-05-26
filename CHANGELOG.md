@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
-- No changes yet.
+
+- `-config` and `-cpu` flags for the executable.
 
 ## [0.1.0] - 2019-05-26
 ### Added
