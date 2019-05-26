@@ -19,7 +19,7 @@ type tagByName map[string]Tag
 // Bag is a data structure that contains mappings from tag name to tag instance.
 type Bag struct {
 	// Loads tags from a json file.
-	tagProvider *JSONProvider
+	tagProvider Provider
 
 	tagsByLocale map[request.Locale]tagByName
 }
@@ -30,7 +30,7 @@ func (b *Bag) Load(locale request.Locale) {
 		return
 	}
 
-	var tags = b.tagProvider.GetTags(locale)
+	var tags = b.tagProvider.GetByLocale(locale)
 	var tbn = make(tagByName)
 
 	for _, tag := range tags {

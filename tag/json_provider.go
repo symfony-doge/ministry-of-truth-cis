@@ -26,7 +26,7 @@ type JSONProvider struct {
 }
 
 // Returns tags from a json file.
-func (p *JSONProvider) GetTags(locale request.Locale) Tags {
+func (p *JSONProvider) GetByLocale(locale request.Locale) Tags {
 	var c = config.Instance()
 
 	var filenameFormat = c.GetString(configPathTagsDataJson)
