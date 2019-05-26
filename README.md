@@ -104,7 +104,7 @@ $ curl --request POST \
 
 **URL**
 
-`/index`
+`/tag/groups`
 
 **Methods**
 
