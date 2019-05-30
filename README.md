@@ -10,7 +10,7 @@ Name is a humorous reference to George Orwell's [1984](https://en.wikipedia.org/
 ### Docker
 
 The preferred way to install is through [docker-compose](https://docs.docker.com/compose).
-You need to have a [Docker](https://docs.docker.com/install) daemon at least [17.05.0-ce](https://docs.docker.com/engine/release-notes/#17050-ce) (with build-time `ARG` in `FROM`) to successfully cook container with application.
+You need to have a [Docker](https://docs.docker.com/install) daemon at least [17.05.0-ce](https://docs.docker.com/engine/release-notes/#17050-ce) (with build-time `ARG` in `FROM`) to successfully cook a container with application.
 
 Run an automated deploy script for local development with Docker.
 

@@ -20,7 +20,7 @@ var weightedAverageCalculatorOnce sync.Once
 // (g1*w1 + g2*w2 + ... + gN*wN) / P; where N is a rule number.
 type weightedAverageCalculator struct{}
 
-// Implements ValueCalculator interface.
+// Implements valueCalculator interface.
 func (vc *weightedAverageCalculator) Calculate(rules rule.Rules) float64 {
 	if len(rules) < 1 {
 		return 99.9
