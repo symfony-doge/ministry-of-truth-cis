@@ -6,6 +6,8 @@ package rule
 
 import (
 	"context"
+
+	"github.com/symfony-doge/event"
 )
 
 // Performs rule processing routine.
@@ -14,7 +16,7 @@ type Worker interface {
 	SetContext(context.Context)
 
 	// Adds a channel or group of channels for worker's events.
-	AddNotifyChannel(...chan<- Event)
+	AddNotifyChannel(...chan<- event.Event)
 
 	// Starts routine execution.
 	Run()

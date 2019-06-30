@@ -8,6 +8,8 @@ import (
 	"log"
 	"runtime"
 	"sync"
+
+	"github.com/symfony-doge/event"
 )
 
 const (
@@ -32,7 +34,7 @@ type DefaultWorkerPool struct {
 
 func (wp *DefaultWorkerPool) Distribute(
 	task interface{},
-	notifyChannel chan<- Event,
+	notifyChannel chan<- event.Event,
 ) (*sync.WaitGroup, error) {
 	if err := wp.prepareWorkers(task, notifyChannel); nil != err {
 		wp.logger.Println(err)
@@ -46,7 +48,7 @@ func (wp *DefaultWorkerPool) Distribute(
 // Creates workers and sets their execution contexts.
 func (wp *DefaultWorkerPool) prepareWorkers(
 	task interface{},
-	notifyChannel chan<- Event,
+	notifyChannel chan<- event.Event,
 ) error {
 	var workerCount, resolvingErr = wp.resolveWorkerCount(task)
 	if nil != resolvingErr {

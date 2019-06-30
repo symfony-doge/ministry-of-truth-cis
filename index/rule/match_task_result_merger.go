@@ -35,7 +35,15 @@ type MatchTaskResultMerger struct {
 	resultByRuleName
 }
 
-func (m *MatchTaskResultMerger) Merge(rule *Rule, context OccurrenceFoundContext) {
+func (m *MatchTaskResultMerger) Add(context OccurrenceFoundContext) {
+	for ruleIdx := range context.rules {
+		m.merge(context, ruleIdx)
+	}
+}
+
+func (m *MatchTaskResultMerger) merge(context OccurrenceFoundContext, ruleIdx int) {
+	var rule *Rule = context.rules[ruleIdx]
+
 	var result, isResultExists = m.resultByRuleName[rule.Name]
 	if !isResultExists {
 		result.rule = rule

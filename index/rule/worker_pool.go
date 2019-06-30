@@ -7,6 +7,8 @@ package rule
 import (
 	"fmt"
 	"sync"
+
+	"github.com/symfony-doge/event"
 )
 
 // Splits a task to separate parts and distributes their execution
@@ -15,7 +17,7 @@ import (
 type WorkerPool interface {
 	// Receives a concurrent task and a channel for worker events.
 	// Returns a wait group instance if workers are successfully started.
-	Distribute(interface{}, chan<- Event) (*sync.WaitGroup, error)
+	Distribute(interface{}, chan<- event.Event) (*sync.WaitGroup, error)
 }
 
 type WorkerNotPreparedError struct {

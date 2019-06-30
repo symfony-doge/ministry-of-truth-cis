@@ -6,6 +6,8 @@ package rule
 
 import (
 	"log"
+
+	"github.com/symfony-doge/event"
 )
 
 // Can be thrown by a processor that uses a rule events system;
@@ -34,7 +36,7 @@ type ConcurrentProcessor struct {
 	workerPool WorkerPool
 
 	// Acquires events from workers.
-	eventListener EventListener
+	eventListener event.Listener
 
 	// Performs merging of partial results from workers.
 	matchTaskResultMerger *MatchTaskResultMerger
@@ -70,18 +72,16 @@ func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
 
 // Fires each time when a new rule event is available for processing.
 // It is a result collecting/merging function for separate task parts.
-func (p *ConcurrentProcessor) onRuleEvent(event Event) {
-	switch event.Type {
+func (p *ConcurrentProcessor) onRuleEvent(e event.Event) {
+	switch e.Type {
 	// Merging match task partial results.
 	case OccurrenceFoundEvent:
-		for ruleIdx := range event.Rules {
-			var context, isOccurrenceFoundContext = event.Payload.(OccurrenceFoundContext)
-			if !isOccurrenceFoundContext {
-				panic("rule: occurrence found event misuse.")
-			}
-
-			p.matchTaskResultMerger.Merge(event.Rules[ruleIdx], context)
+		var context, isOccurrenceFoundContext = e.Payload.(OccurrenceFoundContext)
+		if !isOccurrenceFoundContext {
+			panic("rule: occurrence found event misuse.")
 		}
+
+		p.matchTaskResultMerger.Add(context)
 	default:
 		panic("rule: undefined event.")
 	}
@@ -91,7 +91,7 @@ func NewConcurrentProcessor() *ConcurrentProcessor {
 	return &ConcurrentProcessor{
 		logger:                DefaultLogger,
 		workerPool:            NewDefaultWorkerPool(),
-		eventListener:         DefaultEventListenerInstance(),
+		eventListener:         event.DefaultListenerInstance(),
 		matchTaskResultMerger: NewMatchTaskResultMerger(),
 	}
 }

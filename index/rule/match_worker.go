@@ -6,6 +6,8 @@ package rule
 
 import (
 	"context"
+
+	"github.com/symfony-doge/event"
 )
 
 // Performs rule matching routine against a part of text sentence
@@ -14,7 +16,7 @@ type MatchWorker struct {
 	// Context with match task and any additional settings for worker.
 	context context.Context
 
-	channelsToNotify []chan<- Event
+	channelsToNotify []chan<- event.Event
 
 	// Returns rules which are applicable for the given word.
 	occurrenceFinder OccurrenceFinder
@@ -24,7 +26,7 @@ func (w *MatchWorker) SetContext(context context.Context) {
 	w.context = context
 }
 
-func (w *MatchWorker) AddNotifyChannel(notifyChannels ...chan<- Event) {
+func (w *MatchWorker) AddNotifyChannel(notifyChannels ...chan<- event.Event) {
 	w.channelsToNotify = append(w.channelsToNotify, notifyChannels...)
 }
 
@@ -48,8 +50,8 @@ func (w *MatchWorker) checkWordOccurrence(contextMarker string, sentence Sentenc
 		}
 
 		var summaryOffset = sentence.offset + wordOffset
-		var context = OccurrenceFoundContext{word, wp, summaryOffset}
-		var occurrenceFoundEvent = NewOccurrenceFoundEvent(rules, context)
+		var context = OccurrenceFoundContext{rules, word, wp, summaryOffset}
+		var occurrenceFoundEvent = NewOccurrenceFoundEvent(context)
 
 		for ncIdx := range w.channelsToNotify {
 			w.channelsToNotify[ncIdx] <- occurrenceFoundEvent

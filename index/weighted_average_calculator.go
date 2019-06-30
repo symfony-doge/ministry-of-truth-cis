@@ -23,7 +23,7 @@ type weightedAverageCalculator struct{}
 // Implements valueCalculator interface.
 func (vc *weightedAverageCalculator) Calculate(rules rule.Rules) float64 {
 	if len(rules) < 1 {
-		return 99.9
+		return 80.0
 	}
 
 	var weightedGradeSum, weightTotal float64 = 0.0, 0.0
