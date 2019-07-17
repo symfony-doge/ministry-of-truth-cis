@@ -35,12 +35,6 @@ type SpecificationEntry struct {
 
 type Rules []*Rule
 
-// func (r Rules) String() string {
-// 	var str strings.Builder
-// 	str.WriteString(fmt.Sprintf("%v\n", r[0].Weight))
-// 	return str.String()
-// }
-
 // Rule for sanity index calculation. Rule is applicable to the text sentence if:
 // 1. One of the specified rule contexts equals to "contextMarker" for the text sentence.
 // 2. A text sentence contains all words in the rule specification.

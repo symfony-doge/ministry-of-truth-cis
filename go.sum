@@ -115,10 +115,10 @@ github.com/stretchr/objx v0.1.1/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
-github.com/symfony-doge/event v0.0.0-20190630084722-1d48d6d7a9b6 h1:Z7eD2jhiuCOAKcJVxcUNaya3zEFf9qs0LupOUTVxo1Y=
-github.com/symfony-doge/event v0.0.0-20190630084722-1d48d6d7a9b6/go.mod h1:UD3k2VMTILB+Oz7U+9aBpw/7W+DZ+E9Xr4fRQZ8DYjM=
-github.com/symfony-doge/event v0.1.0 h1:v/IGr9rktVHW9y7iirz3NrDDyr2Q2TcDVYN5wy9YSI0=
-github.com/symfony-doge/event v0.1.0/go.mod h1:UD3k2VMTILB+Oz7U+9aBpw/7W+DZ+E9Xr4fRQZ8DYjM=
+github.com/symfony-doge/event v0.2.0 h1:0w/eiPbJL5ukOegKBbAlKcQ7NyK7hHFEIYw2+sZwf8k=
+github.com/symfony-doge/event v0.2.0/go.mod h1:UD3k2VMTILB+Oz7U+9aBpw/7W+DZ+E9Xr4fRQZ8DYjM=
+github.com/symfony-doge/splitex v0.1.0 h1:eb7na7iYAu+bW/C4jsRVF9tYOnDapVesZ9dlfxj4wuI=
+github.com/symfony-doge/splitex v0.1.0/go.mod h1:3noVnn+Bez3zx+jDW/avUyHfDNyBdgUAm/F7fCUbIOw=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
 github.com/ugorji/go v1.1.4 h1:j4s+tAvLfL3bZyefP2SEWmhBzmuIlH/eqNuPdFPgngw=
 github.com/ugorji/go v1.1.4/go.mod h1:uQMGLiO92mf5W77hV/PUCpI3pbzQx3CRekS0kk+RGrc=

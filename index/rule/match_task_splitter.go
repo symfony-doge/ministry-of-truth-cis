@@ -2,18 +2,12 @@
 // Use of this source code is governed by a MIT license
 // that can be found in the LICENSE file.
 
-// 1) При дизайне структуры заранее учитывать разделение на подзадачи
-// (например, взять дерево, либо другую структуру, которую можно асинхронно
-// строить и контекстно-независимо обходить за 0(1) или O(log N).
-// 2) Метод разделения на подзадачи должен быть недорогим, помогает
-// предварительно задизайненная под параллельные вычисления структура, см п.1
-// 3) Определить порог (объем данных), до которого запускать задачу в одном
-// потоке выполнения, иначе будет оверхед на коммуникацию.
-
 package rule
 
 import (
 	"context"
+
+	"github.com/symfony-doge/splitex"
 )
 
 const (
@@ -43,32 +37,43 @@ type mtSplitContext struct {
 
 // Represents a splitter for match tasks; divides a task to a set
 // of separate and independent tasks for parallel processing.
+// Implements splitex.TaskSplitter interface.
 type MatchTaskSplitter struct{}
 
-func (s *MatchTaskSplitter) isSplittable(task MatchTask) (bool, error) {
-	return task.Size() >= minWordsForSplitThreshold, nil
+func (s *MatchTaskSplitter) IsSplittable(task interface{}) (bool, error) {
+	switch taskCasted := task.(type) {
+	case MatchTask:
+		return taskCasted.Size() >= minWordsForSplitThreshold, nil
+	default:
+		return false, splitex.UndefinedSplitAlgorithmError{task}
+	}
 }
 
 // Splits task into partsCount separate tasks.
-func (s *MatchTaskSplitter) Split(task MatchTask, partsCount int) ([]context.Context, error) {
-	// A single execution flow case, no splitting actually required.
-	if partsCount < 2 {
-		return []context.Context{NewMatchTaskContext(task)}, nil
-	}
+func (s *MatchTaskSplitter) Split(task interface{}, partsCount int) ([]context.Context, error) {
+	switch taskCasted := task.(type) {
+	case MatchTask:
+		// A single execution flow case, no splitting actually required.
+		if partsCount < 2 {
+			return []context.Context{NewMatchTaskContext(taskCasted)}, nil
+		}
 
-	var splitContext *mtSplitContext = s.newSplitContext(task, partsCount)
+		var splitContext *mtSplitContext = s.newSplitContext(taskCasted, partsCount)
 
-	for contextMarker := range task.sentenceByContextMarker {
-		splitContext.contextMarker = contextMarker
+		for contextMarker := range taskCasted.sentenceByContextMarker {
+			splitContext.contextMarker = contextMarker
 
-		for {
-			if isEndOfContext := s.splitNext(splitContext); isEndOfContext {
-				break
+			for {
+				if isEndOfContext := s.splitNext(splitContext); isEndOfContext {
+					break
+				}
 			}
 		}
-	}
 
-	return splitContext.contexts, nil
+		return splitContext.contexts, nil
+	default:
+		return []context.Context{}, splitex.UndefinedSplitAlgorithmError{task}
+	}
 }
 
 // Returns new context for task splitting operation.

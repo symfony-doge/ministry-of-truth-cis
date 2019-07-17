@@ -12,6 +12,7 @@ import (
 
 // Performs rule matching routine against a part of text sentence
 // using settings from the specified context.
+// Implements splitex.Worker interface.
 type MatchWorker struct {
 	// Context with match task and any additional settings for worker.
 	context context.Context

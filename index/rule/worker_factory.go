@@ -5,20 +5,35 @@
 package rule
 
 import (
-	"fmt"
+	"sync"
+
+	"github.com/symfony-doge/splitex"
 )
 
-// Worker factory is responsible for worker instantiation.
-// It receives a task instance and should return a valid worker for it.
-type WorkerFactory interface {
-	CreateFor(interface{}) (Worker, error)
+var workerFactoryInstance *WorkerFactory
+
+var workerFactoryOnce sync.Once
+
+// Implements splitex.WorkerFactory interface.
+type WorkerFactory struct{}
+
+func (wf *WorkerFactory) CreateFor(task interface{}) (splitex.Worker, error) {
+	switch task.(type) {
+	case MatchTask:
+		return NewMatchWorker(), nil
+	default:
+		return nil, splitex.UndefinedWorkerError{task}
+	}
 }
 
-type UndefinedWorkerError struct {
-	task interface{}
+func NewWorkerFactory() *WorkerFactory {
+	return &WorkerFactory{}
 }
 
-// Implements error interface.
-func (err UndefinedWorkerError) Error() string {
-	return fmt.Sprintf("Worker for task is not defined (task=%T)", err.task)
+func WorkerFactoryInstance() *WorkerFactory {
+	workerFactoryOnce.Do(func() {
+		workerFactoryInstance = NewWorkerFactory()
+	})
+
+	return workerFactoryInstance
 }

@@ -8,7 +8,25 @@ import (
 	"log"
 
 	"github.com/symfony-doge/event"
+	"github.com/symfony-doge/splitex"
 )
+
+// ConcurrentProcessor uses a worker pool and a listener to subscribe for rule
+// events and collect results (rule occurrences) using all available CPU cores.
+// Use the construct function to create a new instance for each request.
+type ConcurrentProcessor struct {
+	logger *log.Logger
+
+	// Splits a task to separate parts and distributes their execution
+	// among all available workers.
+	workerPool splitex.WorkerPool
+
+	// Acquires events from workers.
+	eventListener event.Listener
+
+	// Performs merging of partial results from workers.
+	matchTaskResultMerger *MatchTaskResultMerger
+}
 
 // Can be thrown by a processor that uses a rule events system;
 // indicates that an event listener has not been initialized.
@@ -23,23 +41,6 @@ type WorkerNotStartedError struct{}
 
 func (err WorkerNotStartedError) Error() string {
 	return "Unable to FindMatch. Workers are not started."
-}
-
-// Uses a worker pool and a listener to subscribe for rule events
-// and collect results (rule occurrences) using all available CPU cores.
-// Use the construct function to create a new instance for each request.
-type ConcurrentProcessor struct {
-	logger *log.Logger
-
-	// Splits a task to separate parts and distributes their execution
-	// among all available workers.
-	workerPool WorkerPool
-
-	// Acquires events from workers.
-	eventListener event.Listener
-
-	// Performs merging of partial results from workers.
-	matchTaskResultMerger *MatchTaskResultMerger
 }
 
 func (p *ConcurrentProcessor) FindMatch(task MatchTask) (Rules, error) {
@@ -88,9 +89,11 @@ func (p *ConcurrentProcessor) onRuleEvent(e event.Event) {
 }
 
 func NewConcurrentProcessor() *ConcurrentProcessor {
+	workerPool := splitex.DefaultWorkerPoolWith(NewMatchTaskSplitter(), WorkerFactoryInstance())
+
 	return &ConcurrentProcessor{
 		logger:                DefaultLogger,
-		workerPool:            NewDefaultWorkerPool(),
+		workerPool:            workerPool,
 		eventListener:         event.DefaultListenerInstance(),
 		matchTaskResultMerger: NewMatchTaskResultMerger(),
 	}

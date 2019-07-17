@@ -28,7 +28,7 @@ type matchTaskResult struct {
 
 type resultByRuleName map[string]matchTaskResult
 
-// ResultMerger prepares a total result of task execution in concurrent
+// MatchTaskResultMerger prepares a total result of task execution in concurrent
 // environment; result parts will be received and "merged" from the workers.
 type MatchTaskResultMerger struct {
 	// Maps rule name to the task execution result.
