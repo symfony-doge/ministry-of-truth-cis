@@ -53,5 +53,5 @@ func TestBagGetByName(t *testing.T) {
 	var tag2, isTagExists2 = b.GetByName("nonexistentTagName", btTestLocale)
 
 	assert.False(t, isTagExists2, "Existence flag must be false for an non-existent tag.")
-	assert.Empty(t, tag2, "Expecting a zero tag sturcture.")
+	assert.Empty(t, tag2, "Expecting a zero tag structure.")
 }

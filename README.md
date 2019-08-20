@@ -1,5 +1,9 @@
 # Ministry of Truth CIS
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/symfony-doge/ministry-of-truth-cis)](https://goreportcard.com/report/github.com/symfony-doge/ministry-of-truth-cis)
+[![GoDoc](https://godoc.org/github.com/symfony-doge/ministry-of-truth-cis?status.svg)](https://godoc.org/github.com/symfony-doge/ministry-of-truth-cis)
+[![GitHub](https://img.shields.io/github/license/symfony-doge/ministry-of-truth-cis.svg)](LICENSE)
+
 Sanity index provider for the vacancy aggregation engine [symfony-doge/veslo](https://github.com/symfony-doge/veslo).
 
 An extremely fast microservice that takes a text and returns sanity index (SI) for it w/ search tags.
